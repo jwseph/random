@@ -1,4 +1,4 @@
-# Random.py
+# random.py
 Random python tests
 
 ### poly.py
