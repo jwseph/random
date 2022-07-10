@@ -54,7 +54,7 @@ def is_convex(vertices):
   return True
 
 
-string = input('> ')
+string = input('Enter the coordinates of the vertices of a polygon\nExample (5x5 square): (0, 0), (0, 5), (5, 5), (5, 0)\n> ')
 numbers = list(map(float, string.replace(' ', '').replace('(', '').replace(')', '').split(',')))
 vertices = [Point(vertex) for vertex in zip(*[iter(numbers)]*2)]
 n = len(vertices)
