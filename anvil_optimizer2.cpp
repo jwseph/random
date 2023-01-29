@@ -59,17 +59,12 @@ struct Path {
     unordered_map<int, int> workings;
     Path() {
         cost = max_cost = 0;
-        remaining = {};
-        steps = {};
-        workings = {};
     }
 };
 
 string make_key(set<int>& remaining) {
-    cout << "makekey started" << endl;
     ostringstream os;
     for (const int& item: remaining) os << item << ' ';
-    cout << "makekey ended" << endl;
     return os.str();
 }
 
@@ -77,8 +72,7 @@ queue<Path*> explode_path(Path* path, unordered_map<int, int>& costs);
 int get_item_cost(int item, unordered_map<int, int>& costs);
 
 
-int solve(unordered_map<string, int>& raw_items) {
-    cout << "solve started" << endl;
+int solve(map<string, int>& raw_items) {
     unordered_map<int, tuple<string, int, int, int>> enchants;  // tuple is enchant, level, weight, score
     unordered_map<int, int> costs;
     int i = 0;
@@ -92,26 +86,22 @@ int solve(unordered_map<string, int>& raw_items) {
             weight,
             cost,
         };
-        costs[1<<i] = cost;
+        costs[i] = cost;
         items.insert(1<<i);
         ++i;
     }
 
-    cout << "initial_path started" << endl;
     Path* initial_path = new Path;
     initial_path->remaining = items;
     for (const int& item: items) initial_path->workings[item] = 0;
     queue<Path*> incomplete_paths;
     incomplete_paths.push(initial_path);
-    cout << "initial_path finished" << endl;
 
     Path* best_path = new Path;
     best_path->cost = best_path->max_cost = INT_MAX;
     
-    cout << "main solve loop started" << endl;
     queue<Path*> complete_paths;
     while (!incomplete_paths.empty()) {
-        cout << "main solve loop iteration started" << endl;
         for (int n = incomplete_paths.size(); n > 0; --n) {
             for (queue<Path*> paths = explode_path(incomplete_paths.front(), costs); !paths.empty(); paths.pop()) {
                 Path*& path = paths.front();
@@ -124,11 +114,10 @@ int solve(unordered_map<string, int>& raw_items) {
                     best_path = path;
                 }
             }
+            delete incomplete_paths.front();
             incomplete_paths.pop();
         }
-        cout << "main solve loop iteration finished" << endl;
     }
-    cout << "main solve loop finished" << endl;
 
     int best_cost = best_path->cost;
     while (!complete_paths.empty()) {
@@ -136,50 +125,28 @@ int solve(unordered_map<string, int>& raw_items) {
         complete_paths.pop();
     }
 
-    cout << "solve finished" << endl;
     return best_cost;
 }
 
 
 queue<Path*> explode_path(Path* path, unordered_map<int, int>& costs) {
-    cout << "explode_path started" << endl;
     unordered_map<string, Path*> best_paths;
     for (auto i = path->remaining.begin(); i != path->remaining.end(); ++i) {
         for (auto j = path->remaining.begin(); j != path->remaining.end(); ++j) {
-            cout << "explode_path guard clause started" << endl;
             if (i == j || *j&1) continue;
-            cout << "explode_path guard clause finished" << endl;
-            cout << "explode_path new_path started" << endl;
-            cout << "remaining size is " << path->remaining.size() << endl;
             Path* new_path = new Path;
-            // new_path->remaining = {};
-            cout << "inserting started" << endl;
             for (auto k = path->remaining.begin(); k != path->remaining.end(); ++k) {
-                cout << (k == i) << ' ' << (k == j) << endl;
-                cout << "a" << endl;
                 if (k == i || k == j) continue;
-                cout << "b" << endl;
                 new_path->remaining.insert(*k);
-                cout << "inserting" << endl;
             }
-            cout << "inserting finished" << endl;
-            // new_path->remaining = set<int>(path->remaining.begin(), path->remaining.end());
-            new_path->steps = vector<pair<int, int>>(path->steps.begin(), path->steps.end());
-            new_path->workings = unordered_map<int, int>(path->workings.begin(), path->workings.end());
-            // *new_path = *path;
-            cout << "explode_path new_path finished" << endl;
-            cout << "explode_path erasing started" << endl;
-            for (auto k = path->remaining.begin(); k != path->remaining.end(); ++k) cout << *k << ' ';
-            cout << endl << *i << ' ' << *j << endl;
-            new_path->remaining.erase(i);
-            new_path->remaining.erase(j);
-            cout << "explode_path erasing finished" << endl;
-            cout << "explode_path assertion started" << endl;
+            new_path->cost = path->cost;
+            new_path->max_cost = path->max_cost;
+            new_path->steps = path->steps;
+            new_path->workings = path->workings;
+
             assert(!(*i&*j));  // There should be no intersection in the items
-            cout << "explode_path assertion finished" << endl;
             int c = *i|*j;  // Combined
             new_path->remaining.insert(c);
-            cout << "explode_path new_path finished" << endl;
             
             int work_i = path->workings[*i], work_j = path->workings[*j];
             int work_c = max(work_i, work_j)+1;
@@ -188,13 +155,12 @@ queue<Path*> explode_path(Path* path, unordered_map<int, int>& costs) {
             new_path->steps.push_back({*i, *j});
             
             // Calculate step cost
-            int step_penalty_cost = (1<<*i)+(1<<*j)-2;
+            int step_penalty_cost = (1<<work_i)+(1<<work_j)-2;
             int step_enchant_cost = get_item_cost(*j, costs);
             int step_cost = step_penalty_cost+step_enchant_cost;
             new_path->cost += step_cost;
             new_path->max_cost = max(new_path->max_cost, step_cost);
             
-            cout << "best_paths adding started" << endl;
             string key = make_key(new_path->remaining);
             if (best_paths.find(key) != best_paths.end()) {
                 Path*& best_path = best_paths[key];
@@ -205,16 +171,13 @@ queue<Path*> explode_path(Path* path, unordered_map<int, int>& costs) {
             } else {
                 best_paths[key] = new_path;
             }
-            cout << "best_paths adding finished" << endl;
         }
     }
-    cout << "explode_path finished" << endl;
-    cout << "explode_path returning started" << endl;
+
     queue<Path*> paths;
     for (const auto& best_path: best_paths) {
         paths.push(best_path.second);
     }
-    cout << "explode_path returning finished" << endl;
     return paths;
 }
 
@@ -222,7 +185,7 @@ queue<Path*> explode_path(Path* path, unordered_map<int, int>& costs) {
 int get_item_cost(int item, unordered_map<int, int>& costs) {
     int total_cost = 0;
     for (int i = 0; item > 0; ++i) {
-        if (item&1) total_cost += costs[1<<i];
+        if (item&1 && i != 0) total_cost += costs[i];
         item >>= 1;
     }
     return total_cost;
@@ -230,14 +193,22 @@ int get_item_cost(int item, unordered_map<int, int>& costs) {
 
 
 int main() {
-    unordered_map<string, int> items = {
-        {"tool", -1},
+    map<string, int> items = {
+        // {"!tool", -1},
         // {"protection", 4},
         // {"feather_falling", 4},
         // {"depth_strider", 3},
-        {"unbreaking", 3},
-        {"mending", 1},
+        // {"unbreaking", 3},
+        // {"mending", 1},
         // {"thorns", 3},
+        {"!tool", -1},
+        {"protection", 4},
+        {"depth_strider", 3},
+        {"feather_falling", 4},
+        {"mending", 1},
+        {"soul_speed", 3},
+        {"thorns", 3},
+        {"unbreaking", 3},
     };
     cout << "Starting" << endl;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
