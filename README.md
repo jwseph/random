@@ -10,3 +10,6 @@ contains a one-liner solve_linear function that solves a linear equation
 
 ### math_bowling.py
 Brute-forces math bowling!
+
+### tictactoe.py
+Tic tac toe brute-force bot
