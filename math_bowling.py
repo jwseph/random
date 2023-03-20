@@ -110,4 +110,3 @@ def solve(nums: set[int], *, use_fact: bool = True):
 if __name__ == '__main__':
     nums = {float(_) for _ in input('Enter nums (space-separated): ').split()}
     solve(nums, use_fact=True)
-    exit()
