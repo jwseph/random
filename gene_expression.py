@@ -53,7 +53,7 @@ dragon_phenotype_table = {
     'phenylalanine-glycine-proline': 'five claws',
     'histidine-tyrosine-proline-serine': 'straight horns',
     'serine-tyrosine-proline-valine': 'curved horns',
-    'glutamine-lysine-histidine-cysteine': 'pointed tail',
+    'glutamate-lysine-histidine-cysteine': 'pointed tail',
     'proline-lysine-histidine-cysteine': 'rounded tail',
     'threonine-tryptophan-histidine': 'ice-blue eyes',
     'threonine-alanine-histidine': 'glowing-orange eyes',
