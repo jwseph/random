@@ -1,3 +1,5 @@
+import random
+
 win = [
     (0b000000111, 0b001001001, 0b100010001),
     (0b000000111, 0b010010010),
@@ -36,6 +38,17 @@ def winner(a, b):
 
 def tie(a, b):
     return a|b == (1<<9)-1
+
+def best_move(a, b):
+    moves = []
+    for i in range(9):
+        if (a|b)&1<<i: continue
+        moves.append((-sol(b, a|1<<i, l=i), i))
+    moves.sort(reverse=True)
+    i = 0
+    while i < len(moves) and moves[i][0] == moves[0][0]:
+        i += 1
+    return random.choice(moves[:i])
 
 if __name__ == '__main__':
     import timeit
