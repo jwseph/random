@@ -27,6 +27,16 @@ def sol(a=0, b=0, m=-1, M=1, l=9):
     dp[a, b] = r
     return r
 
+def winner(a, b):
+    for i in range(9):
+        for s in win[l]:
+            if a&s == s: return 1
+            if b&s == s: return -1
+    return 0
+
+def tie(a, b):
+    return a|b == (1<<9)-1
+
 if __name__ == '__main__':
     import timeit
     print(timeit.Timer(sol).timeit(1))
