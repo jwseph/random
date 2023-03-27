@@ -15,7 +15,6 @@ win = [
 dp = {}
 def sol(a=0, b=0, m=-1, M=1, l=9):
     if (a, b) in dp: return dp[a, b]
-    if m >= M: return m
     for s in win[l]:
         if b&s == s: return -1
     if a|b == (1<<9)-1: return 0
