@@ -9,13 +9,14 @@ winning_states = [
     0b001010100,
 ]
 
+# Use a<<9|b for dp hash in other languages
 dp = {}
 def sol(a=0, b=0, m=-1, M=1):
     if (a, b) in dp: return dp[a, b]
     if m >= M: return M
-    for state in winning_states:
-        if a&state == state: return 1
-        if b&state == state: return -1
+    for s in winning_states:
+        if a&s == s: return 1
+        if b&s == s: return -1
     if a|b == (1<<9)-1: return 0
     for i in range(9):
         if a&1<<i|b&1<<i: continue
