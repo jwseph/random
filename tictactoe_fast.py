@@ -27,5 +27,6 @@ def sol(a=0, b=0, m=-1, M=1, l=9):
     dp[a, b] = r
     return r
 
-import timeit
-print(timeit.Timer(sol).timeit(1))
+if __name__ == '__main__':
+    import timeit
+    print(timeit.Timer(sol).timeit(1))
