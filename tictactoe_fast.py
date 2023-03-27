@@ -17,7 +17,7 @@ def sol(a=0, b=0, m=-1, M=1, l=9):
     if (a, b) in dp: return dp[a, b]
     if m >= M: return m
     for s in win[l]:
-        if a&s == s: return 1
+        if b&s == s: return -1
     if a|b == (1<<9)-1: return 0
     for i in range(9):
         if a&1<<i|b&1<<i: continue
