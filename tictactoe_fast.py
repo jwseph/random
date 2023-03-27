@@ -20,7 +20,7 @@ def sol(a=0, b=0, m=-1, M=1, l=9):
     if a|b == (1<<9)-1: return 0
     r = -2
     for i in range(9):
-        if a&1<<i|b&1<<i: continue
+        if (a|b)&1<<i: continue
         r = max(r, -sol(b, a|1<<i, -M, -m, i))
         m = max(m, r)
         if m >= M: break
