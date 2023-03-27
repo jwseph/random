@@ -48,7 +48,7 @@ def best_move(a, b):
     i = 0
     while i < len(moves) and moves[i][0] == moves[0][0]:
         i += 1
-    return random.choice(moves[:i])
+    return random.choice(moves[:i])[1]
 
 if __name__ == '__main__':
     import timeit
