@@ -41,7 +41,7 @@ def encode(plaintext, pos='AAA'):
 
 if __name__ == '__main__':
   print('=== ENIGMA ===')
-  pos = input('Initial rotor position (ex. AAA): ').strip().upper()
+  pos = input('Rotor setting (ex. AAA): ').strip().upper()
   print('Start typing whatever text you want to encode!')
   print('TIP: The Enigma is symmetrical, so encoding is the same as decoding')
   while True:
