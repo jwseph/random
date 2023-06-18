@@ -33,11 +33,11 @@ def encode(plaintext, pos='AAA'):
   iii = rotate(III, idx(pos[2]))
   ciphertext = ''
   for ch in plaintext:
-    rotate(iii, 1)
+    iii = rotate(iii, 1)
     if iii == III:
-      rotate(ii, 1)
+      ii = rotate(ii, 1)
       if ii == II:
-        rotate(i, 1)
+        i = rotate(i, 1)
     reflected = enc(R, enc(i, enc(ii, enc(iii,  ch))))
     ciphertext += dec(iii, dec(ii, dec(i, reflected)))
   return ciphertext
