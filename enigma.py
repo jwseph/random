@@ -1,49 +1,48 @@
 # http://stanford.edu/class/archive/cs/cs106a/cs106a.1164/handouts/29-TheEnigmaMachine.pdf
 
-def enc(rotor, ch):
-  return rotor[ord(ch)-ord('A')]
+A = ord('A')
+N = 26
 
-def dec(rotor, ch):
-  return chr(rotor.index(ch)+ord('A'))
-
-I   = 'JGDQOXUSCAMIFRVTPNEWKBLZYH'
-II  = 'NTZPSFBOKMWRCJDIVLAEYUXHGQ'
-III = 'JVIUBHTCDYAKEQZPOSGXNRMWFL'
-UKW = 'QYHOGNECVPUZTFDJAXWMKISRBL'
-ETW = 'QWERTZUIOASDFGHJKPYXCVBNML'
-
-
-# pos A
+# Position AAA
 III = 'BDFHJLCPRTXVZNYEIWGAKMUSQO'
 II  = 'AJDKSIRUXBLHWTMCQGZNPYFVOE'
-I   = 
+I   = 'EKMFLGDQVZNTOWYHXUSPAIBRCJ'
+R   = 'IXUHFEZDAOMTKQJWNSRLCYPBVG'
 
-def rotate(rotor):
-  return ''.join(chr((ord(ch)-ord('A')-1)%26+ord('A')) for ch in rotor[1:]+rotor[:1])
+def idx(ch):
+  return ord(ch)-A
 
-print(III)
-for _ in range(25):
-  III = rotate(III)
-print(III)
-print(rotate(III))
+def enc(rotor, ch):
+  return rotor[idx(ch)]
+
+def dec(rotor, ch):
+  return chr(rotor.index(ch)+A)
+
+def rotate(rotor, n):
+  for _ in range(n):
+    rotor = ''.join(chr((idx(ch)-1)%N+A) for ch in rotor[1:]+rotor[:1])
+  return rotor
 
 def encode(plaintext, pos='AAA'):
-  pI, pII, pIII = pos
+  plaintext = ''.join(ch for ch in plaintext.upper() if ch in III)
+  i = rotate(I, idx(pos[0]))
+  ii = rotate(II, idx(pos[1]))
+  iii = rotate(III, idx(pos[2]))
   ciphertext = ''
   for ch in plaintext:
-    ciphertext += dec(III, dec(II, dec(I, enc(ETW, enc(I, enc(II, enc(III, ch)))))))
+    rotate(iii, 1)
+    if iii == III:
+      rotate(ii, 1)
+      if ii == II:
+        rotate(i, 1)
+    reflected = enc(R, enc(i, enc(ii, enc(iii,  ch))))
+    ciphertext += dec(iii, dec(ii, dec(i, reflected)))
   return ciphertext
 
-def decode(plaintext, pos='AAA'):
-  pI, pII, pIII = pos
-  ciphertext = ''
-  for ch in plaintext:
-    ciphertext += dec(III, dec(II, dec(I, dec(ETW, enc(I, enc(II, enc(III, ch)))))))
-  return ciphertext
-
-text = 'HELLOWORLD'
-print(text)
-print(''.join(enc(I, ch) for ch in text))
-print(''.join(dec(I, enc(I, ch)) for ch in text))
-print(encode('HELLOWORLD'))
-print(decode(encode('HELLOWORLD')))
+if __name__ == '__main__':
+  print('=== ENIGMA ===')
+  pos = input('Initial rotor position (ex. AAA): ').strip().upper()
+  print('Start typing whatever text you want to encode!')
+  print('TIP: The Enigma is symmetrical, so encoding is the same as decoding')
+  while True:
+    print(encode(input('> '), pos))
