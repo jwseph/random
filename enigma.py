@@ -12,6 +12,9 @@ R   = 'IXUHFEZDAOMTKQJWNSRLCYPBVG'
 def idx(ch):
   return ord(ch)-A
 
+def keep_upper(text):
+  return ''.join(ch for ch in text.upper() if 0 <= idx(ch) < N)
+
 def enc(rotor, ch):
   return rotor[idx(ch)]
 
@@ -24,7 +27,7 @@ def rotate(rotor, n):
   return rotor
 
 def encode(plaintext, pos='AAA'):
-  plaintext = ''.join(ch for ch in plaintext.upper() if ch in III)
+  plaintext = keep_upper(plaintext)
   i = rotate(I, idx(pos[0]))
   ii = rotate(II, idx(pos[1]))
   iii = rotate(III, idx(pos[2]))
@@ -40,8 +43,8 @@ def encode(plaintext, pos='AAA'):
   return ciphertext
 
 if __name__ == '__main__':
-  print('=== ENIGMA ===')
-  pos = input('Rotor setting (ex. AAA): ').strip().upper()
+  print('===== THE ENIGMA MACHINE =====')
+  pos = keep_upper(input('Rotor setting (ex. AAA): '))
   print('Start typing whatever text you want to encode!')
   print('TIP: The Enigma is symmetrical, so encoding is the same as decoding')
   while True:
