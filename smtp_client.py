@@ -1,23 +1,23 @@
 import smtplib, ssl
-from email.message import EmailMessage
 from getpass import getpass
+from email.message import EmailMessage
+from email.utils import formataddr
 
 email = 'info@dhaownconstruction.com'
 password = getpass(f'Enter password for {email}: ')
 receiver = 'mukilteoacademy@gmail.com'
 
-# Create a secure SSL context
 context = ssl.create_default_context()
-
 server = smtplib.SMTP_SSL('mail.dhaownconstruction.com', 465, context=context)
-# server = smtplib.SMTP('seattlepartners.us', 587)
 
 server.login(email, password)
+print('Logged in as', email)
 
-subject = input('Subject: ')
-text = input('Body: ')
-message = f'From: {email}\nTo: {receiver}\nSubject: {subject}\n\n{text}'
+msg = EmailMessage()
+msg['From'] = formataddr((input('Name to use: '), email))
+msg['To'] = receiver
+msg['Subject'] = input('Subject: ')
+msg.set_content(input('Body: '))
 
-server.sendmail(email, receiver, message)
-
+server.send_message(msg)
 print('Email sent.')
