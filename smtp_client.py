@@ -5,11 +5,14 @@ from email.utils import formataddr
 
 email = 'info@dhaownconstruction.com'
 password = getpass(f'Enter password for {email}: ')
+# receiver = 'mukilteoacademy@gmail.com'
+# email = 'admin@advangers.com'
 receiver = 'mukilteoacademy@gmail.com'
 
 context = ssl.create_default_context()
-server = smtplib.SMTP_SSL('mail.dhaownconstruction.com', 465, context=context)
-
+print('Context created, trying to connect')
+server = smtplib.SMTP_SSL('mail.advangers.com', 465, context=context)
+print('Logging in...')
 server.login(email, password)
 print('Logged in as', email)
 

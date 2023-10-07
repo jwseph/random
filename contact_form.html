@@ -1,26 +1,40 @@
 <!doctype html>
 <html>
   <head>
-
   </head>
   <body>
-
+    <h1>Contact</h1>
+    <div>
+      <form id='contactForm'>
+        <p>
+          <div><label for='comment'>Comment</label></div>
+          <textarea id='comment' name='comment' rows='4' cols='50' placeholder='Leave a comment'></textarea>
+        </p>
+        <p>
+          <div><label for='fullname'>Name</label></div>
+          <input id='fullname' name='fullname' placeholder='Enter name'>
+        </p>
+        <p>
+          <div><label for='email'>Email</label></div>
+          <input id='email' name='email' placeholder='Enter email address'>
+        </p>
+        <input type='submit' value='Submit'>
+      </form>
+      <div id='contactDone' style='display: none;'>Thank you for sending!</div>
+    </div>
   </body>
   <script src='https://smtpjs.com/v3/smtp.js'></script>
   <script>
-    function sendEmail() {
-      Email.send({
-        Host : 'smtp.gmail.com',
-        Username : 'joeyjoeyjoe13@gmail.com',
-        Password : '[redacted]',
-        To : 'kodomo.oishii@gmail.com',
-        From : 'hello@world.com',
-        Subject : 'Subject',
-        Body : 'Body'
-      }).then(
-        message => alert(message)
-      );
+    contactForm.onsubmit = async (e) => {
+      e.preventDefault();
+      contactForm.style.display = 'none';
+      contactDone.style.display = '';
+
+      let url = 'http://localhost:8000/contact';
+      url += '?comment=' + encodeURIComponent(comment.value);
+      url += '&name=' + encodeURIComponent(fullname.value);
+      url += '&email=' + encodeURIComponent(email.value);
+      fetch(url, {method: 'POST'});
     }
-    // ERROR MESSAGE: Only elasticemail is supported as an SMTP host. To open an account please visit https://elasticemail.com/account#/create-account?r=20b444a2-b3af-4eb8-bae7-911f6097521c
   </script>
 </html>
