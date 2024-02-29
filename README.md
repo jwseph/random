@@ -25,3 +25,6 @@ Word hunt solver
 
 ### polynomial_solver.py
 Solves any polynomial in the form of a dictionary in the form {power: coefficient, ...}
+
+### calendar_solver.py
+Solves the calendar puzzle (A-Puzzle-A-Day)
