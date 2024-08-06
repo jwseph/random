@@ -32,7 +32,7 @@ $('body').append(`
 <div id='helper'>
   <div id='helper-activate' class='helper-visible tw-fixed tw-right-0 tw-bottom-0 [&.helper-visible]:tw--bottom-32 tw-p-6 tw-w-28 tw-h-28 tw-pointer-events-none tw-duration-500 tw-ease-in-out'>
     <button id='helper-activate-button' class='tw-rounded-full tw-shadow-lg hover:tw-opacity-80 hover:tw-brightness-105 active:tw-opacity-50 active:tw-brightness-110 active:tw-scale-90 tw-pointer-events-auto tw-duration-300 tw-ease-out'>
-      <img src='https://api.hotelchatai.com/chaticon.png' class='tw-rounded-full' draggable='false'>
+      <img src='https://cdn.jsdelivr.net/gh/jwseph/random/chaticon.png' class='tw-rounded-full' draggable='false'>
     </button>
   </div>
   <div id='helper-box' class='tw-group/helper-box tw-hidden tw-fixed tw-w-full tw-h-full tw-right-0 tw-bottom-0 tw-translate-y-32 tw-opacity-0 [&.helper-visible]:tw-translate-y-0 [&.helper-visible]:tw-opacity-100 tw-p-6 tw-flex tw-flex-col tw-justify-end tw-items-end tw-pointer-events-none tw-duration-500 tw-ease-in-out'>
@@ -43,7 +43,7 @@ $('body').append(`
             <div class='tw-absolute tw-right-0 tw-bottom-0 tw-w-3 tw-h-3 tw-rounded-full tw-bg-white dark:tw-bg-neutral-600 tw-flex tw-flex-col tw-justify-center tw-items-center'>
               <div class='tw-w-2 tw-h-2 tw-rounded-full tw-bg-green-700 dark:tw-bg-green-400'></div>
             </div>
-            <img src='https://api.hotelchatai.com/chaticon.png' class='tw-w-12 tw-h-12 tw-rounded-full'>
+            <img src='https://cdn.jsdelivr.net/gh/jwseph/random/chaticon.png' class='tw-w-12 tw-h-12 tw-rounded-full'>
           </div>
         </div>
         <div class='tw-grow'>
@@ -64,7 +64,7 @@ $('body').append(`
       <div id='helper-message-box' class='tw-min-h-0 tw-h-[32rem] tw-max-w-96 tw-px-6 tw-scroll-py-8 tw-py-8 tw-overflow-auto tw-flex tw-flex-col tw-gap-4'>
         <div id='helper-ellipsis' class='tw-order-last tw-group tw-flex tw-flex-col tw-gap-2 [&.helper-from-user]:tw-items-end' style='display: none;'>
           <div class='tw-flex group-[&.helper-from-user]:tw-justify-end tw-items-center tw-gap-1.5'>
-            <img src='https://api.hotelchatai.com/chaticon.png' class='tw-w-4 tw-h-4 tw-rounded-full group-[&.helper-from-user]:tw-hidden'>
+            <img src='https://cdn.jsdelivr.net/gh/jwseph/random/chaticon.png' class='tw-w-4 tw-h-4 tw-rounded-full group-[&.helper-from-user]:tw-hidden'>
             <div class='tw-text-sm tw-text-neutral-800 dark:tw-text-neutral-100 group-[&.helper-from-user]:tw-hidden'>Assistant</div>
             <div class='tw-text-sm tw-text-neutral-800 dark:tw-text-neutral-100 tw-hidden group-[&.helper-from-user]:tw-block'>You</div>
           </div>
@@ -99,7 +99,7 @@ $('body').append(`
   </div>
   <div id='helper-message-template' class='tw-hidden tw-group tw-flex tw-flex-col tw-gap-2 [&.helper-from-user]:tw-items-end'>
     <div class='tw-flex group-[&.helper-from-user]:tw-justify-end tw-items-center tw-gap-1.5'>
-      <img src='https://api.hotelchatai.com/chaticon.png' class='tw-w-4 tw-h-4 tw-rounded-full group-[&.helper-from-user]:tw-hidden'>
+      <img src='https://cdn.jsdelivr.net/gh/jwseph/random/chaticon.png' class='tw-w-4 tw-h-4 tw-rounded-full group-[&.helper-from-user]:tw-hidden'>
       <div class='tw-text-sm tw-text-neutral-800 dark:tw-text-neutral-100 group-[&.helper-from-user]:tw-hidden'>Assistant</div>
       <div class='tw-text-sm tw-text-neutral-800 dark:tw-text-neutral-100 tw-hidden group-[&.helper-from-user]:tw-block'>You</div>
     </div>
