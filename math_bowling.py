@@ -5,7 +5,7 @@ import time
 f = lambda x: factorial(int(x)) if x.is_integer() and 0 <= x <= 6 else float('nan')
 
 comm_ops = '+', '*'
-ops = '-', '/', '**', '%'
+ops = '-', '/', '**'
 
 funcs1 = {
     False: [('(', ')'), ('s(', ')')],
@@ -24,7 +24,7 @@ def get_exps(nums: set[int], use_fact: bool) -> dict:
             f'{f_l}{num}{f_r}'
             for f_l, f_r in funcs1[use_fact]
         )
-    
+
     res = {}
     for num in nums:
         a_res = get_exps({num}, use_fact)
