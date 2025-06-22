@@ -375,9 +375,12 @@
 </head>
 <body>
     <div class="container">
+        <div id="storage-notification" style="display: none; padding: 15px; background: #eef2ff; color: #4338ca; text-align: center; font-weight: 500;">
+            We've loaded your previously ungenerated words. Ready to try again?
+        </div>
         <div class="header">
             <h1>🎯 AI Vocabulary Generator</h1>
-            <p>Transform your vocabulary list into an interactive learning experience with AI-generated images, phonetic pronunciations, and example sentences powered by Gemini</p>
+            <p>Turn vocabulary words into flashcards with AI-generated images and example sentences</p>
         </div>
 
         <div class="input-section">
@@ -389,55 +392,71 @@
                         id="apiKey" 
                         placeholder="Enter your Gemini API key..."
                         required
+                        autocomplete="new-password"
                     >
+                    <small>Get your free API key at <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a></small>
                 </div>
 
                 <div class="form-group">
                     <label for="vocabList">📚 Vocabulary Words</label>
                     <textarea 
                         id="vocabList" 
-                        placeholder="Enter vocabulary words, one per line or separated by commas...&#10;Example:&#10;serendipity&#10;ephemeral&#10;ubiquitous"
+                        placeholder="Enter words, one per line:&#10;serendipity&#10;ephemeral&#10;ubiquitous"
                     ></textarea>
                     <div style="text-align: center; margin: 15px 0; color: #666;">— OR —</div>
                     <input type="file" id="vocabImages" accept="image/*" multiple style="display: none;">
                     <button type="button" onclick="document.getElementById('vocabImages').click()" 
                             style="background: #6366f1; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
-                        📷 Upload Photos of Vocabulary Pages
+                        📷 Upload Photos
                     </button>
                     <div id="imageStatus" style="margin-top: 10px; font-size: 0.9em; color: #666;"></div>
                 </div>
 
+                <!-- Collapsible Advanced Options -->
                 <div class="form-group">
-                    <label for="imageInstructions">🎨 Image Style (Optional - Edit the style part)</label>
-                    <div style="background: #f3f4f6; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 0.9em;">
-                        <strong>Current prompt:</strong> "Create a <span style="background: #fef3c7; padding: 2px 4px; border-radius: 4px;">realistic, cute, and visually appealing</span> illustration of [word]. Use <span style="background: #fef3c7; padding: 2px 4px; border-radius: 4px;">beautiful, natural colors and professional artistic quality</span>..."
-                    </div>
-                    <textarea 
-                        id="imageInstructions" 
-                        placeholder="Override the highlighted style parts above...&#10;Example:&#10;- cartoon-style and playful&#10;- minimalist and modern&#10;- vintage and artistic&#10;- photorealistic and detailed"
-                    ></textarea>
+                    <details style="margin-top: 20px;">
+                        <summary style="cursor: pointer; font-weight: 600; color: #374151; padding: 10px; background: #f9fafb; border-radius: 8px;">
+                            ⚙️ Advanced Options (Optional)
+                        </summary>
+                        <div style="margin-top: 15px; padding: 15px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fafafa;">
+                            
+                            <div class="form-group">
+                                <label for="imageInstructions">🎨 Image Style</label>
+                                <div style="background: #f3f4f6; padding: 8px; border-radius: 6px; margin-bottom: 8px; font-size: 0.85em;">
+                                    Default: "realistic, cute, and visually appealing"
+                                </div>
+                                <textarea 
+                                    id="imageInstructions" 
+                                    placeholder="Override image style:&#10;cartoon-style and playful&#10;minimalist and modern&#10;vintage and artistic"
+                                    style="height: 80px;"
+                                ></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="sentenceInstructions">📝 Sentence Context</label>
+                                <div style="background: #f3f4f6; padding: 8px; border-radius: 6px; margin-bottom: 8px; font-size: 0.85em;">
+                                    Default: "in context"
+                                </div>
+                                <textarea 
+                                    id="sentenceInstructions" 
+                                    placeholder="Override sentence context:&#10;in business scenarios&#10;in academic writing&#10;in casual conversation"
+                                    style="height: 80px;"
+                                ></textarea>
+                            </div>
+                            
+                        </div>
+                    </details>
                 </div>
 
-                <div class="form-group">
-                    <label for="sentenceInstructions">📝 Sentence Style (Optional - Edit the context part)</label>
-                    <div style="background: #f3f4f6; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 0.9em;">
-                        <strong>Current prompt:</strong> "...Two example sentences using the word <span style="background: #fef3c7; padding: 2px 4px; border-radius: 4px;">in context</span>..."
-                    </div>
-                    <textarea 
-                        id="sentenceInstructions" 
-                        placeholder="Override the context style...&#10;Example:&#10;- in business scenarios&#10;- in academic writing&#10;- in casual conversation&#10;- in creative storytelling&#10;- with emotional depth"
-                    ></textarea>
-                </div>
-
-                <button type="submit" class="generate-btn" id="generateBtn">
-                    ✨ Generate Vocabulary Content
-                </button>
+                <button type="submit" class="generate-btn">✨ Generate Vocabulary Cards</button>
             </form>
         </div>
 
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p>Processing all vocabulary words in parallel with Gemini 2.5 Flash + FREE image generation...</p>
+            <p id="loadingText">Processing your vocabulary words...</p>
+            <div id="timeEstimate" style="margin-top: 10px; font-size: 0.9em; color: #666;"></div>
+            <div id="progressInfo" style="margin-top: 10px; font-size: 0.9em; color: #666;"></div>
         </div>
 
         <div class="results" id="results">
@@ -446,12 +465,110 @@
             <p style="text-align: center; font-size: 0.9em; color: #666; margin-bottom: 20px;">
                 💡 <strong>Tip:</strong> In the print dialog, turn off "Headers and footers" for clean PDFs
             </p>
+            <div id="progress-container" style="display: none; margin-bottom: 20px;">
+                <p id="progress-text" style="text-align: center; margin-bottom: 8px; font-weight: 500; color: #374151; font-size: 0.95em;"></p>
+                <div style="background: #e5e7eb; border-radius: 999px; height: 12px; overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);">
+                    <div id="progress-bar" style="width: 0%; height: 100%; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); transition: width 0.3s ease-in-out;"></div>
+                </div>
+            </div>
             <div id="vocabCards" class="printable"></div>
         </div>
     </div>
 
     <script>
+        // Global state for the generation process
+        let generationState = {
+            dailyLimitReached: false,
+            completedWords: new Set(),
+            consecutiveFailures: 0, // For circuit breaker
+        };
+
+        const MAX_CONSECUTIVE_FAILURES = 5; // Circuit breaker threshold
+
+        /**
+         * A robust queue to manage API requests and respect rate limits.
+         * It ensures that no more than a specified number of requests are sent over a given interval.
+         */
+        class ApiRequestQueue {
+            constructor(limit, interval, name = 'queue') {
+                this.limit = limit; // e.g., 10 requests
+                this.interval = interval; // e.g., 60000 ms (1 minute)
+                this.name = name;
+                this.timestamps = [];
+                this.queue = [];
+                this._processing = false;
+            }
+
+            _processQueue() {
+                if (this._processing) return;
+                this._processing = true;
+
+                // If the daily limit has been hit, reject all pending requests immediately.
+                if (generationState.dailyLimitReached) {
+                    while(this.queue.length > 0) {
+                        const { reject } = this.queue.shift();
+                        reject(new Error('DAILY_LIMIT_REACHED'));
+                    }
+                    this._processing = false;
+                    return;
+                }
+
+                // Stop if there's nothing left to process
+                if (this.queue.length === 0) {
+                    this._processing = false;
+                    return;
+                }
+
+                const now = Date.now();
+                // Clear out timestamps for requests that are older than the interval
+                this.timestamps = this.timestamps.filter(ts => (now - ts) < this.interval);
+
+                if (this.timestamps.length < this.limit) {
+                    this.timestamps.push(Date.now());
+                    const { resolve } = this.queue.shift();
+                    
+                    // console.log(`[${this.name}] Granting request. In flight: ${this.timestamps.length}`);
+                    
+                    resolve(); // Grant permission for the request to proceed
+                    
+                    this._processing = false;
+                    // Immediately try to process the next item in case the queue is full
+                    this._processQueue();
+
+                } else {
+                    // We've hit the rate limit, so we need to wait.
+                    const waitTime = (this.timestamps[0] + this.interval) - now;
+                    // console.log(`[${this.name}] Rate limit reached. Waiting ${waitTime}ms. In flight: ${this.timestamps.length}, Queue size: ${this.queue.length}`);
+
+                    setTimeout(() => {
+                        this._processing = false;
+                        this._processQueue();
+                    }, waitTime > 0 ? waitTime + 50 : 50); // Add a small buffer
+                }
+            }
+
+            /**
+             * Returns a promise that resolves when the request can be safely sent.
+             */
+            wait() {
+                return new Promise((resolve, reject) => {
+                    this.queue.push({ resolve, reject });
+                    this._processQueue();
+                });
+            }
+        }
+
+        // Create separate rate-limiting queues for each API type
+        // Gemini Flash for text/OCR has a 10 RPM free tier limit
+        const geminiFlashTextQueue = new ApiRequestQueue(10, 60000, 'Gemini-Text');
+        // Image generation has its own 10 RPM free tier limit
+        const geminiImageGenQueue = new ApiRequestQueue(10, 60000, 'Gemini-Image');
+
         const API_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadWordsFromStorage();
+        });
 
         document.getElementById('vocabForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -472,6 +589,160 @@
             await extractTextFromMultipleImages(files, apiKey);
         });
 
+        async function generateWordImage(card, word, apiKey, imageInstructions = '', retryCount = 0) {
+            const maxRetries = 5; // More reasonable retry count
+            const imageContainer = card.querySelector('.image-container');
+            
+            // The new queue system makes the old manual rate-limiting logic obsolete.
+            
+            try {
+                // Wait for our turn in the image generation queue to respect rate limits
+                await geminiImageGenQueue.wait();
+
+                // Use FREE Gemini 2.0 Flash image generation
+                const styleInstructions = imageInstructions || 'realistic, cute, and visually appealing';
+                const qualityInstructions = imageInstructions ? '' : ' Use beautiful, natural colors and professional artistic quality. Make it sophisticated yet charming - not childish or cartoonish. The image should clearly represent the concept with artistic elegance.';
+                
+                const prompt = `Create a ${styleInstructions} illustration of "${word}".${qualityInstructions}`;
+                
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: prompt
+                            }]
+                        }],
+                        generationConfig: {
+                            responseModalities: ["TEXT", "IMAGE"]
+                        }
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const parts = data.candidates[0].content.parts;
+                    
+                    let imageData = null;
+                    parts.forEach(part => {
+                        if (part.inlineData && part.inlineData.data) {
+                            imageData = part.inlineData.data;
+                        }
+                    });
+                    
+                    if (imageData) {
+                        imageContainer.innerHTML = `
+                            <img src="data:image/png;base64,${imageData}" 
+                                 alt="Visual representation of ${word}" 
+                                 class="generated-image"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <div class="image-placeholder" style="display:none;">
+                                🎨 <strong>${word}</strong><br><br>
+                                Image could not be displayed
+                            </div>
+                        `;
+                        return; // Success!
+                    } else {
+                        throw new Error('No image data received');
+                    }
+                } else {
+                    const errorText = await response.text().catch(() => 'Unknown error');
+                    const isRateLimit = response.status === 429;
+                    const isServerError = response.status >= 500;
+                    
+                    // Check for daily quota limit specifically - this is a best-effort check.
+                    // The circuit breaker is the more reliable mechanism.
+                    if (isRateLimit && (errorText.includes('quota') || errorText.includes('exhausted'))) {
+                        console.error("Daily quota limit likely reached based on error message.");
+                        generationState.dailyLimitReached = true;
+                        throw new Error('DAILY_LIMIT_REACHED');
+                    }
+                    
+                    if ((isRateLimit || isServerError) && retryCount < maxRetries) {
+                        // Wait longer for rate limits, use exponential backoff for server errors
+                        const waitTime = isRateLimit 
+                            ? 60000 + Math.floor(Math.random() * 5000) 
+                            : (5000 * Math.pow(1.5, retryCount)) + Math.floor(Math.random() * 2000);
+                        
+                        const reason = isRateLimit ? "API Rate Limited" : "API Server Error";
+
+                        imageContainer.innerHTML = `
+                            <div class="image-placeholder">
+                                ⏳ <strong>${reason}</strong><br><br>
+                                Waiting ${Math.round(waitTime/1000)}s before retry ${retryCount + 1}/${maxRetries}...
+                            </div>
+                        `;
+                        
+                        await new Promise(resolve => setTimeout(resolve, waitTime));
+                        return await generateWordImage(card, word, apiKey, imageInstructions, retryCount + 1);
+                    }
+                    
+                    throw new Error(`${response.status}: ${errorText}`);
+                }
+                
+            } catch (error) {
+                console.error('Error generating image:', error);
+                
+                // Only retry a few times for network errors
+                if (retryCount < maxRetries && (error.message.includes('fetch') || error.message.includes('network'))) {
+                    const delay = (retryCount + 1) * 5000;
+                    
+                    imageContainer.innerHTML = `
+                        <div class="image-placeholder">
+                            🔄 <strong>Retrying...</strong><br><br>
+                            Attempt ${retryCount + 1}/${maxRetries}<br>
+                            Waiting ${delay/1000}s...
+                        </div>
+                    `;
+                    
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    return await generateWordImage(card, word, apiKey, imageInstructions, retryCount + 1);
+                }
+                
+                // Fallback to description
+                try {
+                    const descriptionPrompt = `Describe a visual representation for "${word}" in 50 words.`;
+                    
+                    // This is a text request, so it uses the text queue
+                    await geminiFlashTextQueue.wait();
+
+                    const descResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: descriptionPrompt }] }]
+                        })
+                    });
+
+                    if (descResponse.ok) {
+                        const descData = await descResponse.json();
+                        const imageDescription = descData.candidates[0].content.parts[0].text;
+                        
+                        imageContainer.innerHTML = `
+                            <div class="image-placeholder">
+                                🎨 <strong>Visual Description:</strong><br><br>
+                                ${imageDescription}<br><br>
+                                <em style="color: #888; font-size: 0.9em;">Image generation failed. Rate limit: 10 images/minute.</em>
+                            </div>
+                        `;
+                    } else {
+                        throw new Error('Description failed too');
+                    }
+                } catch (descError) {
+                    imageContainer.innerHTML = `
+                        <div class="image-placeholder">
+                            🖼️ <strong>${word}</strong><br><br>
+                            Image generation failed: ${error.message}<br><br>
+                            <em style="color: #888; font-size: 0.9em;">Rate limit: 10 images/minute (250/day)</em>
+                        </div>
+                    `;
+                }
+            }
+        }
+
         async function generateVocabularyContent() {
             const apiKey = document.getElementById('apiKey').value.trim();
             const vocabText = document.getElementById('vocabList').value.trim();
@@ -490,49 +761,201 @@
 
             // Parse vocabulary words
             const vocabWords = vocabText
-                .split(/[,\n]/)
+                .split(/[\n,]/)
                 .map(word => word.trim())
                 .filter(word => word.length > 0);
 
             if (vocabWords.length === 0) {
-                alert('Please enter at least one vocabulary word!');
+                alert('No valid vocabulary words found!');
                 return;
             }
 
-            // Show loading state
+            // --- Reset State ---
+            generationState.dailyLimitReached = false;
+            generationState.completedWords.clear();
+            generationState.consecutiveFailures = 0;
+            localStorage.removeItem('ungeneratedVocabWords'); // Clear old words before starting
+
+            const wordsCount = vocabWords.length;
+            
+            // --- Time & Progress Setup ---
+            const progressContainer = document.getElementById('progress-container');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const timeEstimateEl = document.getElementById('timeEstimate');
+            
+            // Reset and show progress UI
+            if (progressContainer) {
+                progressContainer.style.display = 'block';
+                if(progressBar) progressBar.style.width = '0%';
+                if(progressText) progressText.textContent = 'Preparing...';
+            }
+
+            // Initial, more conservative time estimate (12s/word)
+            const initialEstimateMs = wordsCount * 12 * 1000;
+            timeEstimateEl.textContent = `Estimated time: ~${formatTime(initialEstimateMs)}`;
             document.getElementById('loading').style.display = 'block';
             document.getElementById('results').style.display = 'none';
-            document.getElementById('generateBtn').disabled = true;
+            document.getElementById('loadingText').textContent = `Generating ${wordsCount} card${wordsCount !== 1 ? 's' : ''}...`;
 
             const vocabCards = document.getElementById('vocabCards');
-            vocabCards.innerHTML = '';
+            vocabCards.innerHTML = ''; // Clear previous results
+
+            const startTime = Date.now();
+            let processedCount = 0;
+
+            // First, create and append placeholder cards to guarantee order
+            const placeholderIds = vocabWords.map((word, index) => {
+                const placeholderId = `card-placeholder-${index}`;
+                const placeholder = document.createElement('div');
+                placeholder.id = placeholderId;
+                placeholder.innerHTML = `
+                    <div class="vocab-card" style="opacity: 0.6; border-style: dashed; border-color: #d1d5db;">
+                        <div class="vocab-header" style="background: #e5e7eb;">
+                            <div class="vocab-word" style="color: #6b7280;">${word}</div>
+                            <div class="pronunciation" style="color: #6b7280;">Queued...</div>
+                        </div>
+                        <div class="vocab-content">
+                            <div class="image-container">
+                                <div class="image-placeholder" style="background: #f3f4f6;">
+                                    Waiting to be generated...
+                                </div>
+                            </div>
+                            <div class="examples">
+                                <h4>📝 Example Sentences</h4>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                vocabCards.appendChild(placeholder);
+                return placeholderId;
+            });
+
+            // --- THIS IS THE FIX FOR INCREMENTAL LOADING ---
+            // Show the results container immediately so the user can see the placeholders
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+
+            const updateProgress = () => {
+                processedCount++;
+                const successfulCount = generationState.completedWords.size;
+                const progressPercent = (processedCount / wordsCount) * 100;
+
+                if (progressBar) {
+                    progressBar.style.width = `${progressPercent}%`;
+                }
+                if (progressText) {
+                    const failedCount = processedCount - successfulCount;
+                    let status = `${successfulCount} / ${wordsCount} cards complete.`;
+                    if (failedCount > 0) {
+                        status += ` (${failedCount} failed)`;
+                    }
+                    progressText.textContent = status;
+                }
+
+                // Update time estimate based on successful cards
+                if (successfulCount > 0) {
+                    const elapsedTime = Date.now() - startTime;
+                    const avgTimePerCard = elapsedTime / successfulCount;
+                    const remainingCount = wordsCount - processedCount;
+                    const estimatedRemainingTime = avgTimePerCard * remainingCount;
+                    const estimatedTotalTime = elapsedTime + estimatedRemainingTime;
+
+                    timeEstimateEl.textContent = `Est. Total: ${formatTime(estimatedTotalTime)} (Elapsed: ${formatTime(elapsedTime)})`;
+                }
+            };
 
             try {
-                // Process all words in parallel (much faster!)
-                console.log(`Processing ${vocabWords.length} words in parallel...`);
+                // Now, process all words in parallel, with queues managing the rate.
+                // Each generated card will replace its placeholder.
+                console.log(`Processing ${vocabWords.length} words. API requests will be rate-limited by the queue.`);
                 
-                const cardPromises = vocabWords.map(word => generateWordCard(word, apiKey, imageInstructions, sentenceInstructions));
-                const cards = await Promise.all(cardPromises);
-                
-                // Add all cards to the DOM
-                cards.forEach(card => vocabCards.appendChild(card));
+                const cardGenerationPromises = vocabWords.map((word, index) => {
+                    return generateWordCard(word, apiKey, imageInstructions, sentenceInstructions, index + 1, wordsCount)
+                        .then(card => {
+                            const placeholder = document.getElementById(placeholderIds[index]);
+                            if (placeholder && card) {
+                                // Replace the placeholder with the fully generated card
+                                placeholder.replaceWith(card);
+                                generationState.completedWords.add(word);
+                                generationState.consecutiveFailures = 0; // Reset on success
+                            }
+                        })
+                        .catch(error => {
+                            // If a single card fails, increment failure count and check circuit breaker
+                            generationState.consecutiveFailures++;
+                            if (generationState.consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
+                                console.error(`Circuit breaker tripped after ${MAX_CONSECUTIVE_FAILURES} consecutive failures.`);
+                                generationState.dailyLimitReached = true; // Trip the breaker
+                            }
 
+                            // Update the UI for the specific failed card
+                            const placeholder = document.getElementById(placeholderIds[index]);
+                            if (placeholder) {
+                                let errorMessage = error.message;
+                                if (errorMessage.includes('DAILY_LIMIT_REACHED') || generationState.dailyLimitReached) {
+                                    errorMessage = "The API is unresponsive or the daily limit was reached. Remaining words will be saved.";
+                                }
+                                placeholder.innerHTML = `
+                                    <div class="vocab-card">
+                                        <div class="error" style="margin: 20px; text-align: center;">
+                                            <strong>Failed to generate card for "${word}"</strong>
+                                            <br><br>
+                                            <small>${errorMessage}</small>
+                                        </div>
+                                    </div>`;
+                            }
+                        })
+                        .finally(updateProgress);
+                });
+                
+                // Use allSettled to wait for all promises to finish (either success or fail)
+                await Promise.allSettled(cardGenerationPromises);
+
+                const totalTime = Math.round((Date.now() - startTime) / 1000);
                 document.getElementById('loading').style.display = 'none';
-                document.getElementById('results').style.display = 'block';
+                
+                // Final time text update
+                const finalTimeText = `Finished in ${formatTime(totalTime * 1000)}.`;
+                timeEstimateEl.textContent = finalTimeText;
+                
+                // --- Save Ungenerated Words ---
+                const ungeneratedWords = vocabWords.filter(word => !generationState.completedWords.has(word));
+                if (ungeneratedWords.length > 0) {
+                    localStorage.setItem('ungeneratedVocabWords', JSON.stringify(ungeneratedWords));
+                    const resultsHeader = document.querySelector('#results h2');
+                    let notification = document.getElementById('save-notification');
+                    if (!notification) {
+                        notification = document.createElement('p');
+                        notification.id = 'save-notification';
+                        notification.style.textAlign = 'center';
+                        notification.style.color = '#d97706';
+                        notification.style.background = '#fffbeb';
+                        notification.style.padding = '10px';
+                        notification.style.borderRadius = '8px';
+                        notification.style.marginBottom = '20px';
+                        resultsHeader.parentNode.insertBefore(notification, resultsHeader.nextSibling);
+                    }
+                    notification.textContent = `💡 ${ungeneratedWords.length} words were not generated and have been saved. They will be loaded automatically next time.`;
+                }
+
             } catch (error) {
-                console.error('Error generating content:', error);
+                console.error('Generation error:', error);
+                showError(`Failed to generate vocabulary content: ${error.message}`);
                 document.getElementById('loading').style.display = 'none';
-                showError('Failed to generate content. Please check your API key and try again.');
-            } finally {
-                document.getElementById('generateBtn').disabled = false;
             }
         }
 
-        async function generateWordCard(word, apiKey, imageInstructions = '', sentenceInstructions = '') {
+        async function generateWordCard(word, apiKey, imageInstructions = '', sentenceInstructions = '', currentIndex = 1, totalCount = 1) {
+            // Update progress
+            const progressInfo = document.getElementById('progressInfo');
+            if (progressInfo) {
+                progressInfo.textContent = `Processing "${word}" (${currentIndex}/${totalCount})...`;
+            }
+
             const card = document.createElement('div');
             card.className = 'vocab-card';
-
-            // Create card structure
+            
             card.innerHTML = `
                 <div class="vocab-header">
                     <div class="vocab-word">${word}</div>
@@ -540,11 +963,13 @@
                 </div>
                 <div class="vocab-content">
                     <div class="image-container">
-                        <div class="image-placeholder">🖼️ Generating visual representation...</div>
+                        <div class="image-placeholder">
+                            🎨 Generating image...
+                        </div>
                     </div>
                     <div class="examples">
                         <h4>📝 Example Sentences</h4>
-                        <div class="example-loading">Generating examples...</div>
+                        <div class="example">Loading examples...</div>
                     </div>
                 </div>
             `;
@@ -554,18 +979,27 @@
                 const textContent = await generateTextContent(word, apiKey, sentenceInstructions);
                 updateCardContent(card, textContent);
                 
-                // Generate image using free Gemini (not paid Imagen)
+                // Generate image using rate-limited system
                 await generateWordImage(card, word, apiKey, imageInstructions);
                 
+                return card;
             } catch (error) {
-                console.error(`Error processing ${word}:`, error);
-                updateCardWithError(card, word);
+                console.error(`Error generating card for "${word}":`, error);
+                
+                // Show error in card
+                card.querySelector('.pronunciation').textContent = `Error: ${error.message}`;
+                card.querySelector('.examples').innerHTML = `
+                    <h4>📝 Example Sentences</h4>
+                    <div class="example">Failed to generate content for "${word}"</div>
+                `;
+                
+                // We re-throw the error so the main promise chain can handle it.
+                throw error;
             }
-
-            return card;
         }
 
-        async function generateTextContent(word, apiKey, sentenceInstructions = '') {
+        async function generateTextContent(word, apiKey, sentenceInstructions = '', retryCount = 0) {
+            const maxRetries = 5;
             const contextStyle = sentenceInstructions || 'in context';
             
             const prompt = `For the vocabulary word "${word}", provide:
@@ -580,35 +1014,68 @@ Format your response as JSON:
         "Second example sentence here."
     ]
 }`;
-
-            const response = await fetch(`${API_BASE_URL}?key=${apiKey}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{
-                            text: prompt
-                        }]
-                    }]
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error(`API request failed: ${response.status}`);
-            }
-
-            const data = await response.json();
-            const text = data.candidates[0].content.parts[0].text;
-            
             try {
-                // Try to parse as JSON
-                const cleanText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-                return JSON.parse(cleanText);
-            } catch {
-                // If JSON parsing fails, extract information manually
-                return parseTextResponse(text, word);
+                // Wait for our turn in the text generation queue
+                await geminiFlashTextQueue.wait();
+
+                const response = await fetch(`${API_BASE_URL}?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: prompt
+                            }]
+                        }]
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text().catch(() => 'Unknown error text');
+                    
+                    // Specifically check for daily quota limit
+                    if (response.status === 429 && (errorText.includes('quota') || errorText.includes('exhausted'))) {
+                        console.error("Daily quota limit likely reached during text generation.");
+                        generationState.dailyLimitReached = true;
+                        throw new Error('DAILY_LIMIT_REACHED');
+                    }
+                    
+                    // Retry on rate limit errors (429) or server errors (5xx)
+                    if ((response.status === 429 || response.status >= 500) && retryCount < maxRetries) {
+                        const baseDelay = response.status === 429 ? 60000 : 3000;
+                        const delay = baseDelay + (Math.floor(Math.random() * 3000));
+                        console.warn(`Retrying for "${word}" after ${delay}ms due to ${response.status}`);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        return await generateTextContent(word, apiKey, sentenceInstructions, retryCount + 1);
+                    }
+                    throw new Error(`API request failed: ${response.status} ${errorText}`);
+                }
+
+                const data = await response.json();
+                const text = data.candidates[0].content.parts[0].text;
+                
+                try {
+                    // Try to parse as JSON
+                    const cleanText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+                    return JSON.parse(cleanText);
+                } catch {
+                    // If JSON parsing fails, extract information manually
+                    console.warn(`JSON parsing failed for "${word}", falling back to text extraction.`);
+                    return parseTextResponse(text, word);
+                }
+            } catch (error) {
+                // Retry on network errors
+                if (retryCount < maxRetries) {
+                    const delay = 2000 * Math.pow(2, retryCount); // Exponential backoff
+                    console.warn(`Retrying for "${word}" after ${delay}ms due to network error: ${error.message}`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    return await generateTextContent(word, apiKey, sentenceInstructions, retryCount + 1);
+                }
+                // If all retries fail, re-throw the error to be caught by the card generator
+                console.error(`All retries failed for "${word}":`, error);
+                throw error;
             }
         }
 
@@ -641,112 +1108,6 @@ Format your response as JSON:
                 pronunciation: pronunciation,
                 examples: examples.slice(0, 2),
             };
-        }
-
-        async function generateWordImage(card, word, apiKey, imageInstructions = '') {
-            const imageContainer = card.querySelector('.image-container');
-            
-            try {
-                // Use FREE Gemini 2.0 Flash image generation (not paid Imagen 3)
-                const styleInstructions = imageInstructions || 'realistic, cute, and visually appealing';
-                const qualityInstructions = imageInstructions ? '' : ' Use beautiful, natural colors and professional artistic quality. Make it sophisticated yet charming - not childish or cartoonish. The image should clearly represent the concept with artistic elegance.';
-                
-                const prompt = `Create a ${styleInstructions} illustration of "${word}".${qualityInstructions}`;
-                
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{
-                                text: prompt
-                            }]
-                        }],
-                        generationConfig: {
-                            responseModalities: ["TEXT", "IMAGE"]
-                        }
-                    })
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    const parts = data.candidates[0].content.parts;
-                    
-                    let imageData = null;
-                    
-                    // Find the image in the response
-                    parts.forEach(part => {
-                        if (part.inlineData && part.inlineData.data) {
-                            imageData = part.inlineData.data;
-                        }
-                    });
-                    
-                    if (imageData) {
-                        imageContainer.innerHTML = `
-                            <img src="data:image/png;base64,${imageData}" 
-                                 alt="Visual representation of ${word}" 
-                                 class="generated-image"
-                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                            <div class="image-placeholder" style="display:none;">
-                                🎨 <strong>${word}</strong><br><br>
-                                Image could not be displayed
-                            </div>
-                        `;
-                    } else {
-                        throw new Error('No image data received');
-                    }
-                } else {
-                    throw new Error(`Failed to generate image: ${response.status}`);
-                }
-                
-            } catch (error) {
-                console.error('Error generating image:', error);
-                
-                // Fallback: Try to generate just a description
-                try {
-                    const descriptionPrompt = `Describe a detailed, vivid visual representation for the word "${word}" that would help someone remember its meaning. Be specific about colors, objects, setting, and mood. Keep it under 100 words.`;
-                    
-                    const descResponse = await fetch(`${API_BASE_URL}?key=${apiKey}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            contents: [{
-                                parts: [{
-                                    text: descriptionPrompt
-                                }]
-                            }]
-                        })
-                    });
-
-                    if (descResponse.ok) {
-                        const descData = await descResponse.json();
-                        const imageDescription = descData.candidates[0].content.parts[0].text;
-                        
-                        imageContainer.innerHTML = `
-                            <div class="image-placeholder">
-                                🎨 <strong>Visual Description:</strong><br><br>
-                                ${imageDescription}<br><br>
-                                <em style="color: #888; font-size: 0.9em;">Note: Image generation failed, showing description instead. This may be due to regional restrictions or API limitations.</em>
-                            </div>
-                        `;
-                    } else {
-                        throw new Error('Failed to generate description');
-                    }
-                } catch (descError) {
-                    imageContainer.innerHTML = `
-                        <div class="image-placeholder">
-                            🖼️ <strong>${word}</strong><br><br>
-                            Image generation is not available.<br>
-                            This may be due to regional restrictions or API key limitations.<br><br>
-                            <em style="color: #888; font-size: 0.9em;">Gemini image generation requires specific API access and may not be available in all regions.</em>
-                        </div>
-                    `;
-                }
-            }
         }
 
         function updateCardContent(card, content) {
@@ -788,16 +1149,138 @@ Format your response as JSON:
 
         async function extractTextFromMultipleImages(files, apiKey) {
             const statusDiv = document.getElementById('imageStatus');
-            statusDiv.textContent = `🔍 Processing ${files.length} image(s) in parallel...`;
+            statusDiv.textContent = `🔍 Processing ${files.length} image(s) with smart rate limiting...`;
             statusDiv.style.color = '#4f46e5';
             
             try {
-                // Process all images in parallel for speed
-                const extractionPromises = files.map((file, index) => 
-                    extractTextFromSingleImage(file, apiKey, index + 1)
-                );
+                // Smart adaptive rate limiting based on actual Gemini limits
+                // Free tier: 10 RPM for Gemini 2.5 Flash
+                // We'll start optimistic and adapt if we hit limits
+                let currentBatchSize = Math.min(files.length, 8); // Start with 8 (80% of 10 RPM)
+                let delayBetweenBatches = 0; // Start with no delay
+                const results = [];
                 
-                const results = await Promise.all(extractionPromises);
+                for (let i = 0; i < files.length; i += currentBatchSize) {
+                    const batch = files.slice(i, i + currentBatchSize);
+                    const batchNumber = Math.floor(i / currentBatchSize) + 1;
+                    const totalBatches = Math.ceil(files.length / currentBatchSize);
+                    
+                    statusDiv.textContent = `🔍 Batch ${batchNumber}/${totalBatches} (${batch.length} images) - Rate: ${currentBatchSize}/batch`;
+                    
+                    const startTime = Date.now();
+                    
+                    try {
+                        const batchPromises = batch.map((file, index) => 
+                            extractTextFromSingleImage(file, apiKey, i + index + 1)
+                        );
+                        
+                        const batchResults = await Promise.all(batchPromises);
+                        results.push(...batchResults);
+                        
+                        // Check if we got rate limited
+                        const rateLimitedCount = batchResults.filter(r => 
+                            !r.success && r.error && r.error.includes('429')
+                        ).length;
+                        
+                        if (rateLimitedCount > 0) {
+                            // We hit rate limits! Adapt for next batch
+                            currentBatchSize = Math.max(1, Math.floor(currentBatchSize / 2));
+                            delayBetweenBatches = Math.max(delayBetweenBatches, 6000); // 6 second delay
+                            statusDiv.textContent = `⚠️ Rate limited! Adapting: ${currentBatchSize}/batch, ${delayBetweenBatches/1000}s delay`;
+                        } else {
+                            // Success! Maybe we can go faster next time
+                            const timeTaken = Date.now() - startTime;
+                            if (timeTaken < 3000 && currentBatchSize < 10) {
+                                currentBatchSize = Math.min(10, currentBatchSize + 1);
+                            }
+                        }
+                        
+                    } catch (error) {
+                        // Handle batch-level errors
+                        console.error('Batch error:', error);
+                        if (error.message && error.message.includes('429')) {
+                            // Rate limited at batch level
+                            currentBatchSize = Math.max(1, Math.floor(currentBatchSize / 2));
+                            delayBetweenBatches = 10000; // 10 second delay
+                        }
+                    }
+                    
+                    // Delay between batches if needed
+                    if (i + currentBatchSize < files.length && delayBetweenBatches > 0) {
+                        statusDiv.textContent = `⏳ Waiting ${delayBetweenBatches/1000}s to respect rate limits...`;
+                        await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
+                    }
+                }
+                
+                // Check for failures and retry them individually with multiple strategies
+                const failedResults = results.filter(result => !result.success);
+                
+                if (failedResults.length > 0) {
+                    statusDiv.textContent = `🔄 Final recovery: retrying ${failedResults.length} failed images with multiple strategies...`;
+                    
+                    // Strategy 1: Immediate retry (maybe it was just bad timing)
+                    for (const failedResult of failedResults) {
+                        const originalIndex = failedResult.imageNumber - 1;
+                        const file = files[originalIndex];
+                        
+                        statusDiv.textContent = `🔄 Strategy 1 - Quick retry for image ${failedResult.imageNumber}...`;
+                        
+                        const retryResult = await extractTextFromSingleImage(file, apiKey, failedResult.imageNumber, 0);
+                        
+                        if (retryResult.success) {
+                            const resultIndex = results.findIndex(r => r.imageNumber === failedResult.imageNumber);
+                            if (resultIndex !== -1) {
+                                results[resultIndex] = retryResult;
+                            }
+                        }
+                    }
+                    
+                    // Strategy 2: Slow and steady for remaining failures
+                    const stillFailed = results.filter(result => !result.success);
+                    if (stillFailed.length > 0) {
+                        statusDiv.textContent = `🔄 Strategy 2 - Slow retry for ${stillFailed.length} remaining images...`;
+                        
+                        for (const failedResult of stillFailed) {
+                            const originalIndex = failedResult.imageNumber - 1;
+                            const file = files[originalIndex];
+                            
+                            statusDiv.textContent = `🔄 Strategy 2 - Slow retry for image ${failedResult.imageNumber}...`;
+                            
+                            // Wait longer between individual retries
+                            await new Promise(resolve => setTimeout(resolve, 5000));
+                            
+                            const retryResult = await extractTextFromSingleImage(file, apiKey, failedResult.imageNumber, 0);
+                            
+                            const resultIndex = results.findIndex(r => r.imageNumber === failedResult.imageNumber);
+                            if (resultIndex !== -1) {
+                                results[resultIndex] = retryResult;
+                            }
+                        }
+                    }
+                    
+                    // Strategy 3: Last ditch effort for any remaining failures
+                    const finallyFailed = results.filter(result => !result.success);
+                    if (finallyFailed.length > 0 && finallyFailed.length <= 10) { // Only if manageable number
+                        statusDiv.textContent = `🔄 Strategy 3 - Final attempt for ${finallyFailed.length} stubborn images...`;
+                        
+                        for (const failedResult of finallyFailed) {
+                            const originalIndex = failedResult.imageNumber - 1;
+                            const file = files[originalIndex];
+                            
+                            statusDiv.textContent = `🔄 Strategy 3 - Final attempt for image ${failedResult.imageNumber}...`;
+                            
+                            // Even longer wait for final attempts
+                            await new Promise(resolve => setTimeout(resolve, 8000));
+                            
+                            const retryResult = await extractTextFromSingleImage(file, apiKey, failedResult.imageNumber, 0);
+                            
+                            const resultIndex = results.findIndex(r => r.imageNumber === failedResult.imageNumber);
+                            if (resultIndex !== -1) {
+                                results[resultIndex] = retryResult;
+                            }
+                        }
+                    }
+                }
                 
                 // Combine all vocabulary words from all images
                 const allWords = results
@@ -805,18 +1288,21 @@ Format your response as JSON:
                     .flatMap(result => result.words)
                     .filter((word, index, array) => array.indexOf(word) === index); // Remove duplicates
                 
-                const failedCount = results.filter(result => !result.success).length;
+                const finalFailedCount = results.filter(result => !result.success).length;
+                const successCount = files.length - finalFailedCount;
                 
                 if (allWords.length > 0) {
                     document.getElementById('vocabList').value = allWords.join('\n');
-                    statusDiv.textContent = `✅ Found ${allWords.length} vocabulary words from ${files.length - failedCount}/${files.length} images!`;
-                    statusDiv.style.color = '#059669';
                     
-                    if (failedCount > 0) {
-                        statusDiv.textContent += ` (${failedCount} image(s) failed)`;
+                    if (finalFailedCount === 0) {
+                        statusDiv.textContent = `✅ Perfect! Found ${allWords.length} vocabulary words from all ${files.length} images!`;
+                        statusDiv.style.color = '#059669';
+                    } else {
+                        statusDiv.textContent = `✅ Found ${allWords.length} vocabulary words from ${successCount}/${files.length} images (${finalFailedCount} still failed after retries)`;
+                        statusDiv.style.color = '#f59e0b'; // Orange for partial success
                     }
                 } else {
-                    statusDiv.textContent = '❌ No vocabulary words found in any images.';
+                    statusDiv.textContent = '❌ No vocabulary words found in any images after all retries.';
                     statusDiv.style.color = '#dc2626';
                 }
                 
@@ -827,8 +1313,13 @@ Format your response as JSON:
             }
         }
 
-        async function extractTextFromSingleImage(file, apiKey, imageNumber) {
+        async function extractTextFromSingleImage(file, apiKey, imageNumber, retryCount = 0) {
+            const maxRetries = 200; // Massive retry capacity for high-volume vocab extraction
+            
             try {
+                // Wait for our turn in the text generation queue before proceeding
+                await geminiFlashTextQueue.wait();
+
                 // Convert image to base64
                 const base64 = await fileToBase64(file);
                 
@@ -856,6 +1347,12 @@ Format your response as JSON:
 
                 if (response.ok) {
                     const data = await response.json();
+                    
+                    // Check if response has valid content
+                    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts || !data.candidates[0].content.parts[0]) {
+                        throw new Error('Invalid API response structure');
+                    }
+                    
                     const extractedText = data.candidates[0].content.parts[0].text;
                     
                     // Clean up and filter vocabulary words
@@ -872,23 +1369,68 @@ Format your response as JSON:
                     return {
                         success: true,
                         words: words,
-                        imageNumber: imageNumber
+                        imageNumber: imageNumber,
+                        retryCount: retryCount
                     };
                 } else {
+                    const errorText = await response.text().catch(() => 'Unknown error');
+                    const isRateLimit = response.status === 429;
+                    const isServerError = response.status >= 500;
+                    const isClientError = response.status >= 400 && response.status < 500;
+                    
+                    // Retry on rate limits or server errors, but not client errors (except 429)
+                    if ((isRateLimit || isServerError) && retryCount < maxRetries) {
+                        // Exponential backoff with jitter to spread out retries
+                        const baseDelay = isRateLimit ? 8000 : 2000; // Longer for rate limits
+                        const exponentialDelay = baseDelay * Math.pow(1.5, retryCount);
+                        const jitter = Math.random() * 2000; // Add randomness to avoid thundering herd
+                        const totalDelay = Math.min(exponentialDelay + jitter, 30000); // Cap at 30 seconds
+                        
+                        console.warn(`Retrying image #${imageNumber} OCR after ${Math.round(totalDelay/1000)}s`);
+                        await new Promise(resolve => setTimeout(resolve, totalDelay));
+                        return await extractTextFromSingleImage(file, apiKey, imageNumber, retryCount + 1);
+                    }
+                    
+                    // Don't retry client errors (except rate limits)
+                    if (isClientError && !isRateLimit) {
+                        return {
+                            success: false,
+                            words: [],
+                            imageNumber: imageNumber,
+                            error: `${response.status}: ${errorText} (client error - not retrying)`,
+                            retryCount: retryCount
+                        };
+                    }
+                    
                     return {
                         success: false,
                         words: [],
                         imageNumber: imageNumber,
-                        error: `API failed: ${response.status}`
+                        error: `${response.status}: ${errorText} (max retries: ${maxRetries})`,
+                        retryCount: retryCount
                     };
                 }
                 
             } catch (error) {
+                // Retry on network errors or other failures
+                if (retryCount < maxRetries) {
+                    // Exponential backoff for network errors too
+                    const baseDelay = 3000;
+                    const exponentialDelay = baseDelay * Math.pow(1.4, retryCount);
+                    const jitter = Math.random() * 1000;
+                    const totalDelay = Math.min(exponentialDelay + jitter, 25000); // Cap at 25 seconds
+                    
+                    console.warn(`Retrying image #${imageNumber} OCR after network error. Wait: ${Math.round(totalDelay/1000)}s`);
+                    await new Promise(resolve => setTimeout(resolve, totalDelay));
+                    return await extractTextFromSingleImage(file, apiKey, imageNumber, retryCount + 1);
+                }
+                
                 return {
                     success: false,
                     words: [],
                     imageNumber: imageNumber,
-                    error: error.message
+                    error: `${error.message} (max retries: ${maxRetries})`,
+                    retryCount: retryCount
                 };
             }
         }
@@ -909,6 +1451,49 @@ Format your response as JSON:
             // Simple: just trigger browser's print dialog
             // User can save as PDF or print
             window.print();
+        }
+
+        function formatTime(milliseconds) {
+            if (milliseconds < 0) milliseconds = 0;
+            const totalSeconds = Math.round(milliseconds / 1000);
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            let timeString = '';
+            if (hours > 0) {
+                timeString += `${hours}h `;
+            }
+            if (minutes > 0 || hours > 0) { // show minutes if hours are shown
+                timeString += `${minutes}m `;
+            }
+            timeString += `${seconds}s`;
+            
+            return timeString.trim();
+        }
+
+        function loadWordsFromStorage() {
+            const savedWords = localStorage.getItem('ungeneratedVocabWords');
+            if (savedWords) {
+                try {
+                    const words = JSON.parse(savedWords);
+                    if (Array.isArray(words) && words.length > 0) {
+                        document.getElementById('vocabList').value = words.join('\n');
+                        const notification = document.getElementById('storage-notification');
+                        notification.style.display = 'block';
+                        // We can clear it immediately after loading
+                        localStorage.removeItem('ungeneratedVocabWords');
+
+                        setTimeout(() => {
+                            notification.style.display = 'none';
+                        }, 5000);
+                    }
+                } catch (e) {
+                    console.error("Failed to parse saved words from localStorage", e);
+                    // Clear corrupted data
+                    localStorage.removeItem('ungeneratedVocabWords');
+                }
+            }
         }
     </script>
 </body>
