@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Vocabulary Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .input-section {
+            padding: 40px;
+            background: #f8fafc;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 1.1rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e5e7eb;
+            border-top: 5px solid #4f46e5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            padding: 40px;
+            display: none;
+        }
+
+        .results h2 {
+            color: #374151;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .export-btn {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 auto 30px;
+            display: block;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(5, 150, 105, 0.3);
+        }
+
+        /* Print styles for PDF export */
+        @page {
+            size: landscape;
+            margin: 0 !important;
+        }
+        
+        @media print {
+            @page { 
+                size: landscape; 
+                margin: 0 !important;
+            }
+            
+            * {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
+            html, body {
+                margin: 0 !important;
+                padding: 0 !important;
+                height: 100% !important;
+                overflow: hidden !important;
+                background: white !important;
+            }
+            
+            body * { visibility: hidden; }
+            .printable, .printable * { visibility: visible; }
+            .printable { 
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100% !important;
+                height: 100% !important;
+                background: white !important;
+            }
+            
+            .vocab-card {
+                page-break-after: always;
+                width: 100% !important;
+                height: 100vh !important;
+                margin: 0 !important;
+                padding: 40px !important;
+                box-shadow: none !important;
+                border: none !important;
+                display: flex !important;
+                flex-direction: column !important;
+                background: white !important;
+            }
+            
+            .vocab-card:last-child {
+                page-break-after: auto;
+            }
+            
+            .export-btn { display: none !important; }
+            
+            /* Force all text to be black for printing */
+            .vocab-word {
+                color: #000000 !important;
+                background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%) !important;
+                -webkit-print-color-adjust: exact !important;
+            }
+            
+            .pronunciation {
+                color: #ffffff !important;
+                opacity: 1 !important;
+                background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%) !important;
+                -webkit-print-color-adjust: exact !important;
+            }
+            
+            .vocab-header {
+                background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%) !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact !important;
+            }
+            
+            .examples h4,
+            .example,
+            p, span, div {
+                color: #000000 !important;
+                opacity: 1 !important;
+            }
+            
+            .examples {
+                background: #f8fafc !important;
+                -webkit-print-color-adjust: exact !important;
+            }
+            
+            .example {
+                background: white !important;
+                border-left: 4px solid #4f46e5 !important;
+                color: #000000 !important;
+                -webkit-print-color-adjust: exact !important;
+            }
+        }
+
+        .vocab-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            overflow: hidden;
+            border: 2px solid #f3f4f6;
+            transition: all 0.3s ease;
+        }
+
+        .vocab-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .vocab-header {
+            background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .vocab-word {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .pronunciation {
+            font-size: 1.3rem;
+            opacity: 1;
+            font-style: italic;
+            color: #ffffff;
+        }
+
+        .vocab-content {
+            padding: 30px;
+        }
+
+        .image-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .generated-image {
+            max-width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            font-size: 1.1rem;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .examples {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .examples h4 {
+            color: #374151;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .example {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4f46e5;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .example:last-child {
+            margin-bottom: 0;
+        }
+
+        .error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .input-section,
+            .results {
+                padding: 20px;
+            }
+            
+            .vocab-word {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 AI Vocabulary Generator</h1>
+            <p>Transform your vocabulary list into an interactive learning experience with AI-generated images, phonetic pronunciations, and example sentences powered by Gemini</p>
+        </div>
+
+        <div class="input-section">
+            <form id="vocabForm">
+                <div class="form-group">
+                    <label for="apiKey">🔑 Gemini API Key</label>
+                    <input 
+                        type="password" 
+                        id="apiKey" 
+                        placeholder="Enter your Gemini API key..."
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="vocabList">📚 Vocabulary Words</label>
+                    <textarea 
+                        id="vocabList" 
+                        placeholder="Enter vocabulary words, one per line or separated by commas...&#10;Example:&#10;serendipity&#10;ephemeral&#10;ubiquitous"
+                    ></textarea>
+                    <div style="text-align: center; margin: 15px 0; color: #666;">— OR —</div>
+                    <input type="file" id="vocabImages" accept="image/*" multiple style="display: none;">
+                    <button type="button" onclick="document.getElementById('vocabImages').click()" 
+                            style="background: #6366f1; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+                        📷 Upload Photos of Vocabulary Pages
+                    </button>
+                    <div id="imageStatus" style="margin-top: 10px; font-size: 0.9em; color: #666;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="imageInstructions">🎨 Image Style (Optional - Edit the style part)</label>
+                    <div style="background: #f3f4f6; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 0.9em;">
+                        <strong>Current prompt:</strong> "Create a <span style="background: #fef3c7; padding: 2px 4px; border-radius: 4px;">realistic, cute, and visually appealing</span> illustration of [word]. Use <span style="background: #fef3c7; padding: 2px 4px; border-radius: 4px;">beautiful, natural colors and professional artistic quality</span>..."
+                    </div>
+                    <textarea 
+                        id="imageInstructions" 
+                        placeholder="Override the highlighted style parts above...&#10;Example:&#10;- cartoon-style and playful&#10;- minimalist and modern&#10;- vintage and artistic&#10;- photorealistic and detailed"
+                    ></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="sentenceInstructions">📝 Sentence Style (Optional - Edit the context part)</label>
+                    <div style="background: #f3f4f6; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 0.9em;">
+                        <strong>Current prompt:</strong> "...Two example sentences using the word <span style="background: #fef3c7; padding: 2px 4px; border-radius: 4px;">in context</span>..."
+                    </div>
+                    <textarea 
+                        id="sentenceInstructions" 
+                        placeholder="Override the context style...&#10;Example:&#10;- in business scenarios&#10;- in academic writing&#10;- in casual conversation&#10;- in creative storytelling&#10;- with emotional depth"
+                    ></textarea>
+                </div>
+
+                <button type="submit" class="generate-btn" id="generateBtn">
+                    ✨ Generate Vocabulary Content
+                </button>
+            </form>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Processing all vocabulary words in parallel with Gemini 2.5 Flash + FREE image generation...</p>
+        </div>
+
+        <div class="results" id="results">
+            <h2>📖 Your Vocabulary Collection</h2>
+            <button class="export-btn" onclick="exportToPDF()">📄 Export to PDF</button>
+            <p style="text-align: center; font-size: 0.9em; color: #666; margin-bottom: 20px;">
+                💡 <strong>Tip:</strong> In the print dialog, turn off "Headers and footers" for clean PDFs
+            </p>
+            <div id="vocabCards" class="printable"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+
+        document.getElementById('vocabForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await generateVocabularyContent();
+        });
+
+        // Handle multiple photo uploads for OCR
+        document.getElementById('vocabImages').addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
+            
+            const apiKey = document.getElementById('apiKey').value.trim();
+            if (!apiKey) {
+                alert('Please enter your Gemini API key first!');
+                return;
+            }
+            
+            await extractTextFromMultipleImages(files, apiKey);
+        });
+
+        async function generateVocabularyContent() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const vocabText = document.getElementById('vocabList').value.trim();
+            const imageInstructions = document.getElementById('imageInstructions').value.trim();
+            const sentenceInstructions = document.getElementById('sentenceInstructions').value.trim();
+            
+            if (!apiKey) {
+                alert('Please provide your Gemini API key!');
+                return;
+            }
+            
+            if (!vocabText) {
+                alert('Please provide vocabulary words either by typing or uploading a photo!');
+                return;
+            }
+
+            // Parse vocabulary words
+            const vocabWords = vocabText
+                .split(/[,\n]/)
+                .map(word => word.trim())
+                .filter(word => word.length > 0);
+
+            if (vocabWords.length === 0) {
+                alert('Please enter at least one vocabulary word!');
+                return;
+            }
+
+            // Show loading state
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('generateBtn').disabled = true;
+
+            const vocabCards = document.getElementById('vocabCards');
+            vocabCards.innerHTML = '';
+
+            try {
+                // Process all words in parallel (much faster!)
+                console.log(`Processing ${vocabWords.length} words in parallel...`);
+                
+                const cardPromises = vocabWords.map(word => generateWordCard(word, apiKey, imageInstructions, sentenceInstructions));
+                const cards = await Promise.all(cardPromises);
+                
+                // Add all cards to the DOM
+                cards.forEach(card => vocabCards.appendChild(card));
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('results').style.display = 'block';
+            } catch (error) {
+                console.error('Error generating content:', error);
+                document.getElementById('loading').style.display = 'none';
+                showError('Failed to generate content. Please check your API key and try again.');
+            } finally {
+                document.getElementById('generateBtn').disabled = false;
+            }
+        }
+
+        async function generateWordCard(word, apiKey, imageInstructions = '', sentenceInstructions = '') {
+            const card = document.createElement('div');
+            card.className = 'vocab-card';
+
+            // Create card structure
+            card.innerHTML = `
+                <div class="vocab-header">
+                    <div class="vocab-word">${word}</div>
+                    <div class="pronunciation">Loading pronunciation...</div>
+                </div>
+                <div class="vocab-content">
+                    <div class="image-container">
+                        <div class="image-placeholder">🖼️ Generating visual representation...</div>
+                    </div>
+                    <div class="examples">
+                        <h4>📝 Example Sentences</h4>
+                        <div class="example-loading">Generating examples...</div>
+                    </div>
+                </div>
+            `;
+
+            try {
+                // Generate pronunciation and examples
+                const textContent = await generateTextContent(word, apiKey, sentenceInstructions);
+                updateCardContent(card, textContent);
+                
+                // Generate image using free Gemini (not paid Imagen)
+                await generateWordImage(card, word, apiKey, imageInstructions);
+                
+            } catch (error) {
+                console.error(`Error processing ${word}:`, error);
+                updateCardWithError(card, word);
+            }
+
+            return card;
+        }
+
+        async function generateTextContent(word, apiKey, sentenceInstructions = '') {
+            const contextStyle = sentenceInstructions || 'in context';
+            
+            const prompt = `For the vocabulary word "${word}", provide:
+1. Phonetic pronunciation (in IPA format if possible, otherwise phonetic spelling)
+2. Two example sentences using the word ${contextStyle}
+
+Format your response as JSON:
+{
+    "pronunciation": "phonetic pronunciation here",
+    "examples": [
+        "First example sentence here.",
+        "Second example sentence here."
+    ]
+}`;
+
+            const response = await fetch(`${API_BASE_URL}?key=${apiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{
+                            text: prompt
+                        }]
+                    }]
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`API request failed: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const text = data.candidates[0].content.parts[0].text;
+            
+            try {
+                // Try to parse as JSON
+                const cleanText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+                return JSON.parse(cleanText);
+            } catch {
+                // If JSON parsing fails, extract information manually
+                return parseTextResponse(text, word);
+            }
+        }
+
+        function parseTextResponse(text, word) {
+            // Fallback parsing if JSON fails
+            const lines = text.split('\n').filter(line => line.trim());
+            
+            let pronunciation = `/${word}/`; // fallback
+            const examples = [];
+            
+            for (const line of lines) {
+                const cleanLine = line.trim();
+                if (cleanLine.toLowerCase().includes('pronunciation') || cleanLine.includes('/') || cleanLine.includes('[')) {
+                    pronunciation = cleanLine.replace(/.*[:]/g, '').trim();
+                } else if (cleanLine.includes(word) && cleanLine.length > word.length + 10 && !cleanLine.toLowerCase().includes('pronunciation')) {
+                    examples.push(cleanLine.replace(/^\d+\.?\s*/, '').trim());
+                }
+            }
+            
+            // Ensure we have at least 2 examples
+            while (examples.length < 2) {
+                if (examples.length === 0) {
+                    examples.push(`The word "${word}" is commonly used in academic and professional contexts.`);
+                } else {
+                    examples.push(`Understanding "${word}" can significantly enhance your vocabulary.`);
+                }
+            }
+            
+            return {
+                pronunciation: pronunciation,
+                examples: examples.slice(0, 2),
+            };
+        }
+
+        async function generateWordImage(card, word, apiKey, imageInstructions = '') {
+            const imageContainer = card.querySelector('.image-container');
+            
+            try {
+                // Use FREE Gemini 2.0 Flash image generation (not paid Imagen 3)
+                const styleInstructions = imageInstructions || 'realistic, cute, and visually appealing';
+                const qualityInstructions = imageInstructions ? '' : ' Use beautiful, natural colors and professional artistic quality. Make it sophisticated yet charming - not childish or cartoonish. The image should clearly represent the concept with artistic elegance.';
+                
+                const prompt = `Create a ${styleInstructions} illustration of "${word}".${qualityInstructions}`;
+                
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: prompt
+                            }]
+                        }],
+                        generationConfig: {
+                            responseModalities: ["TEXT", "IMAGE"]
+                        }
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const parts = data.candidates[0].content.parts;
+                    
+                    let imageData = null;
+                    
+                    // Find the image in the response
+                    parts.forEach(part => {
+                        if (part.inlineData && part.inlineData.data) {
+                            imageData = part.inlineData.data;
+                        }
+                    });
+                    
+                    if (imageData) {
+                        imageContainer.innerHTML = `
+                            <img src="data:image/png;base64,${imageData}" 
+                                 alt="Visual representation of ${word}" 
+                                 class="generated-image"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <div class="image-placeholder" style="display:none;">
+                                🎨 <strong>${word}</strong><br><br>
+                                Image could not be displayed
+                            </div>
+                        `;
+                    } else {
+                        throw new Error('No image data received');
+                    }
+                } else {
+                    throw new Error(`Failed to generate image: ${response.status}`);
+                }
+                
+            } catch (error) {
+                console.error('Error generating image:', error);
+                
+                // Fallback: Try to generate just a description
+                try {
+                    const descriptionPrompt = `Describe a detailed, vivid visual representation for the word "${word}" that would help someone remember its meaning. Be specific about colors, objects, setting, and mood. Keep it under 100 words.`;
+                    
+                    const descResponse = await fetch(`${API_BASE_URL}?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{
+                                    text: descriptionPrompt
+                                }]
+                            }]
+                        })
+                    });
+
+                    if (descResponse.ok) {
+                        const descData = await descResponse.json();
+                        const imageDescription = descData.candidates[0].content.parts[0].text;
+                        
+                        imageContainer.innerHTML = `
+                            <div class="image-placeholder">
+                                🎨 <strong>Visual Description:</strong><br><br>
+                                ${imageDescription}<br><br>
+                                <em style="color: #888; font-size: 0.9em;">Note: Image generation failed, showing description instead. This may be due to regional restrictions or API limitations.</em>
+                            </div>
+                        `;
+                    } else {
+                        throw new Error('Failed to generate description');
+                    }
+                } catch (descError) {
+                    imageContainer.innerHTML = `
+                        <div class="image-placeholder">
+                            🖼️ <strong>${word}</strong><br><br>
+                            Image generation is not available.<br>
+                            This may be due to regional restrictions or API key limitations.<br><br>
+                            <em style="color: #888; font-size: 0.9em;">Gemini image generation requires specific API access and may not be available in all regions.</em>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function updateCardContent(card, content) {
+            // Update pronunciation
+            const pronunciationElement = card.querySelector('.pronunciation');
+            pronunciationElement.textContent = content.pronunciation;
+
+            // Update examples
+            const examplesContainer = card.querySelector('.examples');
+            examplesContainer.innerHTML = `
+                <h4>📝 Example Sentences</h4>
+                ${content.examples.map(example => `<div class="example">${example}</div>`).join('')}
+            `;
+        }
+
+        function updateCardWithError(card, word) {
+            const pronunciationElement = card.querySelector('.pronunciation');
+            pronunciationElement.textContent = `/${word}/`;
+
+            const examplesContainer = card.querySelector('.examples');
+            examplesContainer.innerHTML = `
+                <h4>📝 Example Sentences</h4>
+                <div class="error">Failed to generate examples for "${word}". Please try again.</div>
+            `;
+        }
+
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            
+            const inputSection = document.querySelector('.input-section');
+            inputSection.appendChild(errorDiv);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+
+        async function extractTextFromMultipleImages(files, apiKey) {
+            const statusDiv = document.getElementById('imageStatus');
+            statusDiv.textContent = `🔍 Processing ${files.length} image(s) in parallel...`;
+            statusDiv.style.color = '#4f46e5';
+            
+            try {
+                // Process all images in parallel for speed
+                const extractionPromises = files.map((file, index) => 
+                    extractTextFromSingleImage(file, apiKey, index + 1)
+                );
+                
+                const results = await Promise.all(extractionPromises);
+                
+                // Combine all vocabulary words from all images
+                const allWords = results
+                    .filter(result => result.success)
+                    .flatMap(result => result.words)
+                    .filter((word, index, array) => array.indexOf(word) === index); // Remove duplicates
+                
+                const failedCount = results.filter(result => !result.success).length;
+                
+                if (allWords.length > 0) {
+                    document.getElementById('vocabList').value = allWords.join('\n');
+                    statusDiv.textContent = `✅ Found ${allWords.length} vocabulary words from ${files.length - failedCount}/${files.length} images!`;
+                    statusDiv.style.color = '#059669';
+                    
+                    if (failedCount > 0) {
+                        statusDiv.textContent += ` (${failedCount} image(s) failed)`;
+                    }
+                } else {
+                    statusDiv.textContent = '❌ No vocabulary words found in any images.';
+                    statusDiv.style.color = '#dc2626';
+                }
+                
+            } catch (error) {
+                console.error('Multi-OCR Error:', error);
+                statusDiv.textContent = '❌ Failed to process images. Try clearer photos.';
+                statusDiv.style.color = '#dc2626';
+            }
+        }
+
+        async function extractTextFromSingleImage(file, apiKey, imageNumber) {
+            try {
+                // Convert image to base64
+                const base64 = await fileToBase64(file);
+                
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [
+                                {
+                                    text: "Extract ONLY vocabulary words from this image. Ignore page numbers, headers, footers, chapter titles, exercise numbers, and any other non-vocabulary text. Look for the actual vocabulary terms that students need to learn. Return only the vocabulary words, one per line, without definitions or extra formatting."
+                                },
+                                {
+                                    inlineData: {
+                                        mimeType: file.type,
+                                        data: base64
+                                    }
+                                }
+                            ]
+                        }]
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const extractedText = data.candidates[0].content.parts[0].text;
+                    
+                    // Clean up and filter vocabulary words
+                    const words = extractedText
+                        .split('\n')
+                        .map(line => line.trim())
+                        .filter(line => line.length > 0)
+                        .filter(line => !line.match(/^\d+\.?$/)) // Remove pure numbers
+                        .filter(line => !line.match(/^(page|chapter|unit|lesson|exercise)/i)) // Remove common headers
+                        .filter(line => line.length > 2 && line.length < 50) // Reasonable word length
+                        .map(line => line.replace(/^\d+\.\s*/, '').trim()) // Remove numbering
+                        .filter(line => line.length > 0);
+                    
+                    return {
+                        success: true,
+                        words: words,
+                        imageNumber: imageNumber
+                    };
+                } else {
+                    return {
+                        success: false,
+                        words: [],
+                        imageNumber: imageNumber,
+                        error: `API failed: ${response.status}`
+                    };
+                }
+                
+            } catch (error) {
+                return {
+                    success: false,
+                    words: [],
+                    imageNumber: imageNumber,
+                    error: error.message
+                };
+            }
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const base64 = reader.result.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function exportToPDF() {
+            // Simple: just trigger browser's print dialog
+            // User can save as PDF or print
+            window.print();
+        }
+    </script>
+</body>
+</html> 

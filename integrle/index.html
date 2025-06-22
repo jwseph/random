@@ -1,0 +1,367 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Integrle</title>
+    <meta property="og:title" content="Integrle" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://integrle.pages.dev/" />
+    <meta property="og:image" content="https://integrle.pages.dev/favicon.png" />
+    <meta property="og:description" content="An integral a day keeps the doctor away" />
+    <link rel="icon" type="image/x-icon" href="./favicon.png">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"></script>
+    
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> -->
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
+    <style>
+      body {
+        margin: 0;
+      }
+      #calculator {
+        width: 100%;
+        height: 70vh;
+      }
+      @media (max-width: 768px) {
+        #calculator {
+          height: 68vh;
+        }
+        #integrand {
+          font-size: 0.8rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-light border-bottom justify-content-between">
+      <!-- <a class="navbar-brand">Integrle</a> -->
+      <div></div>
+      <!-- <form class="form-inline">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Statistics</button>
+      </form> -->
+      <div class='d-flex'>
+        
+        <div id='howToPlayModalScrollableContainer' class='mr-2'>
+          <!-- Button trigger modal -->
+          <!-- <button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#exampleModalScrollable">
+            Launch demo modal
+          </button> -->
+          <button class="btn btn-outline-primary my-2 my-sm-0" data-toggle="modal" data-target="#howToPlayModalScrollable">How to play</button>
+      
+          <!-- Modal -->
+          <div class="modal fade" id="howToPlayModalScrollable" tabindex="-1" role="dialog" aria-labelledby="howToPlayModalScrollableTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="howToPlayModalScrollableTitle">How to play Integrle</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <ol>
+                    <li>
+                      Solve the integral. 
+                      \[
+                        \int 2x+5 \ dx = \boxed{ x^2 + 5x + C }
+                      \]
+                    </li>
+                    <li>
+                      Enter your answer within the parentheses.
+                      \[
+                        g(x) = \frac{d}{dx} \left(\boxed{ x^2 + 5x + C }\right)
+                      \]
+                    </li>
+                    <li>
+                      The graphs will match if you're correct.
+                    </li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        
+        
+        <div id='statisticsModalScrollableContainer' class='mr-2'>
+          <button class="btn btn-outline-primary my-2 my-sm-0" data-toggle="modal" data-target="#statisticsModalScrollable">Stats</button>
+      
+          <!-- Modal -->
+          <div class="modal fade" id="statisticsModalScrollable" tabindex="-1" role="dialog" aria-labelledby="statisticsModalScrollableTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="statisticsModalScrollableTitle">Stats</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" id='statisticsContent'>
+                  ...
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        
+        
+        <div id='settingsModalScrollableContainer'>
+          <button class="btn btn-outline-primary my-2 my-sm-0" data-toggle="modal" data-target="#settingsModalScrollable">Settings</button>
+      
+          <!-- Modal -->
+          <div class="modal fade" id="settingsModalScrollable" tabindex="-1" role="dialog" aria-labelledby="settingsModalScrollableTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="settingsModalScrollableTitle">Settings</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" id='settingsContent'>
+                  
+                  <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="darkThemeSwitch" disabled>
+                    <label class="custom-control-label" for="darkThemeSwitch">Dark theme (to be implemented)</label>
+                  </div>
+
+                  <br>
+                  Integrals are from <a href='https://www.instagram.com/integralsforyou/' target='_blank'>@integralsforyou</a>
+                  <br>
+                  Feedback: "josephj" + str(8000-9*9) + "@gmail.com"
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </nav>
+    
+    <div id='integrand' class='p-2 container'></div>
+
+    <div id="calculator"></div>
+
+    
+
+    <script src="https://www.desmos.com/api/v1.10/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
+    <script>
+      const INTEGRANDS = [
+        String.raw`\sqrt{e^{x}}`,
+        String.raw`\left(x+1\right)^2`,
+        String.raw`\frac{x^3}{\sqrt{1+x^2}}`,
+        String.raw`x^3\cdot\sqrt{x^2-1}`,
+        String.raw`\frac{x^2}{\sqrt{1-x^2}}`,
+        String.raw`\frac{\sqrt{1+x}}{\sqrt{1-x^2}}`,
+        String.raw`\frac{x}{x^2+4x+5}`,
+        String.raw`\frac{x^5}{\sqrt{1-x^3}}`,
+        String.raw`\frac{2x}{x^2+8}`,
+        String.raw`\frac{\left(x-1\right)^2}{x+1}`,
+        String.raw`\frac{6x^3-2x}{x^2}`,
+        String.raw`\frac{2}{2x+7}`,
+        String.raw`e^{\arcsin(x)}`,
+        String.raw`\frac{1}{x\cdot\left(1+\ln^2(x)\right)}`,
+        String.raw`\frac{1}{x^2+x}`,
+        String.raw`\ln\left(1-x\right)`,
+        String.raw`\frac{\sqrt{1-x}}{\sqrt{x}}`,
+        String.raw`\frac{x}{4+x^4}`,
+        String.raw`\frac{e^x+1}{e^x+x}`,
+        String.raw`x\cdot\ln^2\left(x\right)`,
+        String.raw`\frac{\cos^3\left(x\right)}{\sqrt{\sin\left(x\right)}}`,
+        String.raw`\frac{1+x^2}{\sqrt{x}}`,
+        String.raw`x\cdot\arcsin\left(x\right)`,
+        String.raw`x\cdot\arccos\left(x\right)`,
+        String.raw`\frac{1}{\left(1+x^2\right)^2}`,
+        String.raw`\frac{\sqrt{1+x^2}}{x^2}`,
+        String.raw`x\cdot\arctan^2\left(x\right)`,
+        String.raw`\frac{x^2}{\sqrt{1-x}}`,
+        String.raw`\frac{e^{4x}}{e^{4x}+5}`,
+        String.raw`\frac{x^3}{1+x^4}`,
+        String.raw`\frac{x^3}{1+x^2}`,
+      ];
+      const INTEGRAND_POS = Math.floor((new Date()-new Date('2/12/2025'))/1000/60/60/24) % INTEGRANDS.length
+      const INTEGRAND = INTEGRANDS[INTEGRAND_POS];
+      $('#integrand').html('\\[ \\LARGE{ \\int ' + INTEGRAND + ' \\ dx}\\]');
+
+      const brackets = {
+        '(': ')',
+        '[': ']',
+        '{': '}',
+      }
+      function getSafeExpression(expr) {
+        expr = expr.replaceAll('\\ ', '').replaceAll(' ', '');
+        for (let i = 0; i+2 < expr.length; i++) {
+          if (expr[i] != '^') continue;
+          let j = i;
+          while (j > 0 && expr[j-1].match(/[a-zA-Z]/)) {
+            j--;
+          }
+          if (j == 0 || expr[j-1] != '\\' || i-j <= 1) continue;
+          if (+expr[i+1] != expr[i+1]) continue;
+          let k = i+2;
+          let h = k;
+          let d = [];
+          if (!!brackets[expr[h]]) {
+            d.push(brackets[expr[h]])
+          }
+          h++;
+          let dmore = d.length > 0;
+          for (; !dmore || d.length; h++) {
+            if (expr[h] == d[d.length-1]) {
+              d.pop();
+              continue;
+            }
+            if (!!brackets[expr[h]]) {
+              d.push(brackets[expr[h]]);
+            }
+            dmore = dmore || d.length > 0;
+          }
+          let newExpr = (
+            expr.substring(0, i) + '(' + expr.substring(k, h) + ')^' + expr.substring(i+1, k) + expr.substring(h)
+          );
+          return getSafeExpression(newExpr);
+        }
+        return expr;
+      }
+
+      const today = new Date().toLocaleDateString();
+
+      var elt = document.getElementById('calculator');
+      var calculator = Desmos.GraphingCalculator(elt);
+      calculator.setExpression({ type: 'text', id: 'instructions', text: 'Enter your answer within the () below to check if you are correct.' });
+      calculator.setExpression({ id: 'actual', latex: 'f(x)=' + getSafeExpression(INTEGRAND), secret: true });
+      calculator.setExpression({ id: 'user', latex: String.raw`g(x)=\frac{d}{dx}\left(\right)` });
+
+      let equivalent = false;
+      calculator.observeEvent('change', function (eventName, event) {
+        if (!equivalent) return;
+        setTimeout(() => {
+          if (!equivalent) return;
+          localStorage.setItem('expressions', JSON.stringify(calculator.getExpressions()));
+          localStorage.setItem('expressionsDay', today)
+        }, 0);
+      });
+      if (localStorage.getItem('expressionsDay') == today) {
+        calculator.setExpressions(JSON.parse(localStorage.getItem('expressions')) || [])
+      }
+
+      let fResults = [], gResults = [];
+
+      let f = calculator.HelperExpression({ latex: 'f([-50,-49.9...50])' });
+      f.observe('listValue', function () {
+        fResults = f.listValue || [];
+        checkEquivalency();
+      });
+
+      let g = calculator.HelperExpression({ latex: 'g([-50,-49.9...50])' });
+      g.observe('listValue', function() {
+        gResults = g.listValue || [];
+        checkEquivalency();
+      })
+
+      function addTodayToLocalStorage() {
+        const daysCompleted = JSON.parse(localStorage.getItem('daysCompleted')) || {};
+        localStorage.setItem('daysCompleted', JSON.stringify({
+          ...daysCompleted,
+          [today]: true,
+        }));
+        getStatisticsArray();
+      }
+
+      function isTodayInLocalStorage() {
+        const daysCompleted = JSON.parse(localStorage.getItem('daysCompleted')) || {};
+        return !!daysCompleted[today];
+      }
+
+      function getStatisticsArray() {
+        const daysCompleted = JSON.parse(localStorage.getItem('daysCompleted')) || {};
+        const statistics = [];
+        for (let i = 0; i < 365*10; i++) {
+          let day = new Date(Date.now() - i*24*60*60*1000).toLocaleDateString()
+          statistics.push([day, daysCompleted[day] || false]);
+        }
+        while (statistics.length && !statistics[statistics.length-1][1]) {
+          statistics.pop();
+        }
+        
+        let $el = $('#statisticsContent');
+        $el.html('');
+        for (let [day, completed] of statistics) {
+          if (day == today && completed) {
+            $el.append(`
+              <h4 class="text-success">Integral complete! Come back tomorrow for another integral!</h4>
+            `)
+          }
+          $el.append(`
+            <div class='badge ${completed ? "badge-success" : "badge-secondary"}'>${day}</div>
+          `)
+        }
+        if (!statistics.length) {
+          $('#statisticsContent').html('')
+        }
+        return statistics;
+      }
+      getStatisticsArray();
+
+      function checkEquivalency() {
+        equivalent = false;
+        if (!fResults.length || fResults.length !== gResults.length) return;
+        let res = true;
+        let cnt = 0;
+        let fDomain = 0, fngDomain = 0;
+        for (let i = 0; i < fResults.length; i++) {
+          let x = fResults[i];
+          let y = gResults[i];
+          fDomain += isFinite(x);
+          fngDomain += isFinite(x) && isFinite(y);
+          if (!isFinite(x) || !isFinite(y)) continue;
+          if (Math.min(x, y) < Number.MIN_SAFE_INTEGER/4) continue;
+          if (Math.max(x, y) > Number.MAX_SAFE_INTEGER/4) continue;
+          if (Math.abs(x-y) > 0.0001*Math.min(Math.abs(x), Math.abs(y))) {
+            console.log(x, y);
+            res = false;
+            break;
+          }
+          cnt++;
+        }
+        if (res && cnt > 0 && fngDomain/fDomain > 0.9) {
+          console.log(`equivalent ${res} ${cnt}`);
+          equivalent = true;
+          localStorage.setItem('expressions', JSON.stringify(calculator.getExpressions()));
+          localStorage.setItem('expressionsDay', today)
+          addTodayToLocalStorage();
+          setTimeout(() => {
+            $("#statisticsModalScrollableContainer").find('button').click();
+          }, 20);
+        }
+      }
+
+      isTodayInLocalStorage() ? (
+        $('#statisticsModalScrollableContainer').find('button').click()
+      ) : (
+        $('#howToPlayModalScrollableContainer').find('button').click()
+      );
+
+      $('#darkThemeSwitch').on('change', function() {
+        localStorage.setItem('darkTheme', this.checked);
+        $('html').attr('data-bs-theme', this.checked ? 'dark' : 'light');
+      });
+      $('#darkThemeSwitch').val(localStorage.getItem('darkTheme') === 'true');
+      
+
+    </script>
+
+  </body>
+</html>
