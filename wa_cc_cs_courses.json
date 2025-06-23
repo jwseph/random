@@ -1,0 +1,100 @@
+[
+  {
+    "institution_code": "WA080",
+    "institution_name": "Bellevue College",
+    "acad_org": "080CS",
+    "status": "Page did not load properly",
+    "scraped_at": "2025-06-22T18:37:25.576129"
+  },
+  {
+    "institution_code": "WA230",
+    "institution_name": "Edmonds College",
+    "acad_org": "230CS",
+    "status": "Page did not load properly",
+    "scraped_at": "2025-06-22T18:37:32.453208"
+  },
+  {
+    "institution_code": "WA050",
+    "institution_name": "Everett Community College",
+    "acad_org": "050CS",
+    "status": "Page did not load properly",
+    "scraped_at": "2025-06-22T18:37:38.678428"
+  },
+  {
+    "institution_code": "WA062",
+    "institution_name": "Seattle Central College",
+    "acad_org": "062CS",
+    "status": "Page did not load properly",
+    "scraped_at": "2025-06-22T18:37:45.681640"
+  },
+  {
+    "institution_code": "WA063",
+    "institution_name": "North Seattle College",
+    "acad_org": "063CS",
+    "status": "Page did not load properly",
+    "scraped_at": "2025-06-22T18:37:52.144683"
+  },
+  {
+    "institution_code": "WA064",
+    "institution_name": "South Seattle College",
+    "acad_org": "064CS",
+    "status": "Page did not load properly",
+    "scraped_at": "2025-06-22T18:37:58.595293"
+  },
+  {
+    "institution_code": "WA100",
+    "institution_name": "Green River College",
+    "acad_org": "100CS",
+    "status": "Page did not load properly",
+    "scraped_at": "2025-06-22T18:38:05.592009"
+  },
+  {
+    "institution_code": "WA090",
+    "institution_name": "Highline College",
+    "acad_org": "090CS",
+    "status": "Page did not load properly",
+    "scraped_at": "2025-06-22T18:38:12.332306"
+  },
+  {
+    "institution_code": "WA260",
+    "institution_name": "Lake Washington Inst. of Tech.",
+    "acad_org": "260CS",
+    "status": "Page did not load properly",
+    "scraped_at": "2025-06-22T18:38:18.734146"
+  },
+  {
+    "institution_code": "WA070",
+    "institution_name": "Shoreline Community College",
+    "acad_org": "070CS",
+    "status": "Page did not load properly",
+    "scraped_at": "2025-06-22T18:38:26.235696"
+  },
+  {
+    "institution_code": "WA110",
+    "institution_name": "Pierce College",
+    "acad_org": "110CS",
+    "status": "Page did not load properly",
+    "scraped_at": "2025-06-22T18:38:32.786911"
+  },
+  {
+    "institution_code": "WA171",
+    "institution_name": "Spokane CC",
+    "acad_org": "171CS",
+    "status": "Page did not load properly",
+    "scraped_at": "2025-06-22T18:38:39.019524"
+  },
+  {
+    "institution_code": "WA172",
+    "institution_name": "Spokane Falls CC",
+    "acad_org": "172CS",
+    "status": "Page did not load properly",
+    "scraped_at": "2025-06-22T18:38:45.216555"
+  },
+  {
+    "institution_code": "WA220",
+    "institution_name": "Tacoma CC",
+    "acad_org": "220CS",
+    "status": "Page did not load properly",
+    "scraped_at": "2025-06-22T18:38:52.808975"
+  }
+]

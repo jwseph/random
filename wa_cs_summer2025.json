@@ -1,0 +1,83 @@
+[
+  {
+    "institution_code": "WA080",
+    "institution_name": "Bellevue College",
+    "scraped_at": "2025-06-22T19:13:08.583986",
+    "course_number": "CS 101",
+    "title": "Class Search\n\n\n\n\n\n\n\n\n\n\n Current pageClass SearchSelect all the required (*) search criteria.Term\u2009* Academic Organization Subject Catalog #Instruction Mode More filters2KeywordSubject Begins WithInstructor Last NameDays Start Time End Time Course Attribute Course Attribute Value Session Start Date FromStart Date ToUnitsAcad Group Class NumberInstructor First NameSearchReset FiltersShow Open Classes OnlyTechnology and Computer Science",
+    "sections": [],
+    "extraction_method": "text_pattern"
+  },
+  {
+    "institution_code": "WA080",
+    "institution_name": "Bellevue College",
+    "scraped_at": "2025-06-22T19:13:08.584968",
+    "course_number": "CS 210",
+    "title": "SectionTopicInstruction ModeDaysStartEndRoomInstructorDatesStatusActionsAdditional Details OA - LEC (11054)Lecture Section OA, Class Number 11054-No TopicOnline AsynchronousInstruction Mode Online AsynchronousARR----OnlineOnlineArt Lovestedt07/07 - 08/2007/07 - 08/2021/36Open, 21 of 36 seats availableLecture Section OA, Class Number 11054 Additional Actions Fundamentals of Computer Science I",
+    "sections": [],
+    "extraction_method": "text_pattern"
+  },
+  {
+    "institution_code": "WA080",
+    "institution_name": "Bellevue College",
+    "scraped_at": "2025-06-22T19:13:08.584968",
+    "course_number": "CS 211",
+    "title": "SectionTopicInstruction ModeDaysStartEndRoomInstructorDatesStatusActionsAdditional Details AA - LEC (11055)Lecture Section AA, Class Number 11055-No TopicIn-Person (Web Enhanced)Instruction Mode In-Person (Web Enhanced)MoTuWeThMonday Tuesday Wednesday Thursday 9:30 am9:30 am10:20 am10:20 amA 110A 110Taesik Kim07/07 - 08/2007/07 - 08/2021/36Open, 21 of 36 seats availableLecture Section AA, Class Number 11055 Additional Actions OA - LEC (11058)Lecture Section OA, Class Number 11058-No TopicOnline Asynchron. w/In-PersonInstruction Mode Online Asynchron. w/In-PersonARR----OnlineOnlineXiao Li07/07 - 08/2007/07 - 08/202/36Open, 2 of 36 seats availableLecture Section OA, Class Number 11058 Additional Actions OB - LEC (11056)Lecture Section OB, Class Number 11056-No TopicOnline Scheduled w/In-PersonInstruction Mode Online Scheduled w/In-PersonMoWeMonday Wednesday 5:30 pm5:30 pm7:40 pm7:40 pmOnlineOnlineJoseph Hueffed07/07 - 08/2007/07 - 08/202/36Open, 2 of 36 seats availableLecture Section OB, Class Number 11056 Additional Actions Fundamentals of Computer Science II",
+    "sections": [],
+    "extraction_method": "text_pattern"
+  },
+  {
+    "institution_code": "WA070",
+    "institution_name": "Shoreline Community College",
+    "scraped_at": "2025-06-22T19:16:09.542665",
+    "course_number": "CS 121",
+    "title": "Class Search\n\n\n\n\n\n\n\n\n\n\n Current pageClass SearchSelect all the required (*) search criteria.Term\u2009* Subject Instruction Mode UnitsInstructor Last NameMore filters2Days Start Time End Time Start Date FromStart Date ToLocation Class NumberCourse Attribute Course Attribute Value Session KeywordInstructor First NameSearchReset FiltersShow Open Classes OnlyIntroduction to Programming",
+    "sections": [],
+    "extraction_method": "text_pattern"
+  },
+  {
+    "institution_code": "WA070",
+    "institution_name": "Shoreline Community College",
+    "scraped_at": "2025-06-22T19:16:09.542665",
+    "course_number": "CS 143",
+    "title": "SectionStatusDaysStartEndRoomInstructorUnitsInstruction ModeActionsAdditional Details N1 - LEC (6042)Lecture Section N1, Class Number 604299/990/30Waitlist, 99/30 of 99 waitlist seats available. 0 of 30 seats availableARR----OnlineOnlineSusan Uland5Online AsynchronousInstruction Mode Online AsynchronousLecture Section N1, Class Number 6042 Additional Actions Y1 - LEC (6074)Lecture Section Y1, Class Number 607424/30Open, 24 of 30 seats availableMoWeMonday Wednesday 12:30 pm12:30 pm2:00 pm2:00 pmRoom 1308Room 1308Michael Pamphlet5HybridInstruction Mode HybridLecture Section Y1, Class Number 6074 Additional Actions Computer Science II Data Structures With Java",
+    "sections": [],
+    "extraction_method": "text_pattern"
+  },
+  {
+    "institution_code": "WA230",
+    "institution_name": "Edmonds College",
+    "scraped_at": "2025-06-22T19:17:50.584746",
+    "course_number": "CS 103",
+    "title": "Class Search\n\n\n\n\n\n\n\n\n\n\n Current pageClass SearchSelect all the required (*) search criteria.Term\u2009* Instruction Mode Academic Organization Subject Catalog #KeywordInstructor Last NameStart Time End Time Days Course Attribute Course Attribute Value More filters2Class NumberLocation Session UnitsSubject Begins WithInstructor First NameShow Open Classes OnlySearchReset FiltersArtificial Intelligence for Everyone",
+    "sections": [],
+    "extraction_method": "text_pattern"
+  },
+  {
+    "institution_code": "WA230",
+    "institution_name": "Edmonds College",
+    "scraped_at": "2025-06-22T19:17:50.584746",
+    "course_number": "CS 115",
+    "title": "SectionInstruction ModeStatusDatesDaysStartEndRoomInstructorUnitsCampusActionsAdditional Details 01 - LEC (10700)Lecture Section 01, Class Number 10700Online AsynchronousInstruction Mode Online Asynchronous22/30Open, 22 of 30 seats available07/07 - 08/2807/07 - 08/28ONL----Online:No Scheduled TimesOnline:No Scheduled TimesJulio Garibay2Main CampusLecture Section 01, Class Number 10700 Additional Actions Principles of Computer Science",
+    "sections": [],
+    "extraction_method": "text_pattern"
+  },
+  {
+    "institution_code": "WA240",
+    "institution_name": "South Puget Sound Comm College",
+    "scraped_at": "2025-06-22T19:18:22.733717",
+    "course_number": "CS 370",
+    "title": "Class Search\n\n\n\n\n\n\n\n\n\n\n Current pageClass SearchSelect all the required (*) search criteria.Term\u2009* Academic Organization Catalog #Instruction Mode Location KeywordMore filters2Start Time End Time Days UnitsInstructor Last NameCourse Attribute Course Attribute Value Subject Begins WithRequirement Designation Instructor First NameSearchReset FiltersShow Open Classes OnlyWeb Programming",
+    "sections": [],
+    "extraction_method": "text_pattern"
+  },
+  {
+    "institution_code": "WA240",
+    "institution_name": "South Puget Sound Comm College",
+    "scraped_at": "2025-06-22T19:18:22.734156",
+    "course_number": "CS 380",
+    "title": "SectionDaysStartEndRoomDatesInstructorUnitsStatusInstruction ModeActionsAdditional Details 01 - LEC (4398)Lecture Section 01, Class Number 4398Arranged----OnlineOnline07/07 - 08/2707/07 - 08/27Tania Jareen524/30Open, 24 of 30 seats availableOnline AsynchronousInstruction Mode Online AsynchronousLecture Section 01, Class Number 4398 Additional Actions Computer Architecture",
+    "sections": [],
+    "extraction_method": "text_pattern"
+  }
+]
